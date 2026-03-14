@@ -25,7 +25,7 @@ Task Counter → Triggers (Researcher, Meta Planner, Auditor)
 ### Feature 1: Goal-to-Task Pipeline
 - User sets goal via Cursor chat
 - Planner decomposes into tasks (Epic → Feature → Module → Tasks)
-- Tasks synced to `tasks/` and `db/dag.db`
+- Tasks synced to `.dreamteam/tasks/` and `.dreamteam/db/dag.db`
 
 ### Feature 2: Task Execution Loop
 - Scheduler selects next ready task
@@ -41,8 +41,8 @@ Task Counter → Triggers (Researcher, Meta Planner, Auditor)
 - **Auditor** — dispatched every 200 tasks (TRIGGER_AUDITOR)
 
 ### Feature 4: Memory & Triggers
-- `memory/architecture.md` — module ownership, dependencies
-- `memory/summaries.md` — progress, decisions
+- `.dreamteam/memory/architecture.md` — module ownership, dependencies
+- `.dreamteam/memory/summaries.md` — progress, decisions
 - Automatic trigger detection via `task_counter.py`
 
 ## Task DAG (from epic)
@@ -73,4 +73,4 @@ Task Counter → Triggers (Researcher, Meta Planner, Auditor)
 - Cursor IDE with Composer
 - `mcp_task` for subagent dispatch (generalPurpose, code-reviewer, etc.)
 - Python 3.10+ for scripts
-- SQLite for `db/dag.db`
+- SQLite for `.dreamteam/db/dag.db`

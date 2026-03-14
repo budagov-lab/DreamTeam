@@ -13,11 +13,11 @@ description: Decomposes goals into a task DAG, designs architecture, and generat
 
 ## Workflow
 
-1. **Read context:** `memory/architecture.md`, `memory/summaries.md`
+1. **Read context:** `.dreamteam/memory/architecture.md`, `memory/summaries.md`
 2. **Decompose:** Epic → Feature → Module → Tasks
 3. **Define dependencies:** Build DAG (no cycles)
 4. **Assign priorities:** Higher number = higher priority
-5. **Create task files:** `tasks/task_XXX.md`
+5. **Create task files:** `.dreamteam/.dreamteam/tasks/task_XXX.md`
 6. **Insert into database:** Use `dreamteam sync-tasks` or direct SQLite
 
 ## Task Format
@@ -26,9 +26,9 @@ See `.cursor/rules/autonomous-dev-system.mdc`.
 
 ## Output
 
-- Task markdown files in `tasks/`
+- Task markdown files in `.dreamteam/tasks/`
 - Database rows in `db/dag.db` (tasks table)
-- Updated `memory/architecture.md` if new modules are introduced
+- Updated `.dreamteam/memory/architecture.md` if new modules are introduced
 
 ## Rules
 

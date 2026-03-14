@@ -9,7 +9,7 @@ echo ""
 echo "Verifying..."
 python -m dreamteam
 echo ""
-if [ ! -f .dreamteam ]; then
+if [ ! -d .dreamteam ]; then
     echo "Creating project..."
     python -m dreamteam new-project .
 fi

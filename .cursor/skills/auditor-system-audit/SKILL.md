@@ -29,4 +29,4 @@ description: Audits architecture, finds duplicates, analyzes dependencies. Use w
 
 - Audit report (markdown)
 - Refactor tasks for critical issues
-- Update `memory/architecture.md` with findings
+- Update `.dreamteam/memory/architecture.md` with findings

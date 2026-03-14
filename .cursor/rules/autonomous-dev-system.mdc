@@ -7,8 +7,8 @@ alwaysApply: true
 
 ## Task Execution
 
-- Before editing code, check `memory/architecture.md` for module ownership and dependencies.
-- Update task status in both the task file (`tasks/task_XXX.md`) and the database after completion.
+- Before editing code, check `.dreamteam/memory/architecture.md` for module ownership and dependencies.
+- Update task status in both the task file (`.dreamteam/tasks/task_XXX.md`) and the database after completion.
 - Run tests before marking a task as `done`.
 - Never mark a task done if dependencies are not fully completed.
 
@@ -29,15 +29,15 @@ Valid statuses: `todo`, `in_progress`, `done`, `blocked`.
 
 ## Code Ownership
 
-- Respect the code ownership map in `memory/architecture.md`.
+- Respect the code ownership map in `.dreamteam/memory/architecture.md`.
 - When modifying a module owned by another agent, document the change and reason.
 - Avoid modifying modules outside your assigned scope unless necessary.
 
 ## Architecture
 
 - Do not introduce circular dependencies.
-- Follow layer hierarchy defined in `memory/architecture.md`.
-- When adding new modules, update `memory/architecture.md` or create a task for Researcher to do so.
+- Follow layer hierarchy defined in `.dreamteam/memory/architecture.md`.
+- When adding new modules, update `.dreamteam/memory/architecture.md` or create a task for Researcher to do so.
 
 ## Triggers
 

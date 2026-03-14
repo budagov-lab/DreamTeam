@@ -59,17 +59,17 @@ The Autonomous Development System enables **500–1000 sequential tasks** withou
 
 ## File Locations
 
-- **Tasks:** `tasks/task_XXX.md`
+- **Tasks:** `.dreamteam/tasks/task_XXX.md`
 - **Agent prompts:** `.cursor/agents/*.md`
-- **Memory:** `memory/architecture.md`, `memory/summaries.md`
-- **Database:** `db/dag.db`
+- **Memory:** `.dreamteam/memory/architecture.md`, `.dreamteam/memory/summaries.md`
+- **Database:** `.dreamteam/db/dag.db`
 - **Task format:** `.cursor/rules/autonomous-dev-system.mdc`
 
 ---
 
 ## Critical Rules
 
-1. **Always read** `memory/architecture.md` before making architectural changes.
+1. **Always read** `.dreamteam/memory/architecture.md` before making architectural changes.
 2. **Update task status** via `dreamteam update-task` (updates both file and DB).
-3. **Respect code ownership** — check `memory/architecture.md` for module owners.
+3. **Respect code ownership** — check `.dreamteam/memory/architecture.md` for module owners.
 4. **Run tests** before marking a task as done.

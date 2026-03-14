@@ -10,7 +10,7 @@ cd DreamTeam
 # Linux/Mac: ./setup.sh
 ```
 
-Setup installs dreamteam and creates project (db/, memory/, tasks/, .cursor/). Open folder in Cursor, run `/start` + goal, then `dreamteam run-next`.
+Setup installs dreamteam and creates project (`.dreamteam/`, `.cursor/`). Open folder in Cursor, run `/start` + goal, then `dreamteam run-next`.
 
 ## Separate project folder
 
@@ -26,11 +26,8 @@ dreamteam run-next
 
 ```
 project/
-├── .dreamteam    # root marker
+├── .dreamteam/   # db, memory, tasks, docs
 ├── .cursor/      # agents, rules
-├── db/           # SQLite
-├── memory/       # architecture, summaries
-├── tasks/        # task_XXX.md
 └── src/          # your code
 ```
 

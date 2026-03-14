@@ -1,6 +1,6 @@
 ---
 description: Task execution rules for Developer agents
-globs: tasks/**/*.md
+globs: .dreamteam/tasks/**/*.md
 alwaysApply: false
 ---
 
@@ -15,7 +15,7 @@ alwaysApply: false
 5. Run tests and fix any failures.
 6. Set task status to `done` via `dreamteam update-task <id> done` (updates both file and DB).
 7. Run `dreamteam verify-tasks` periodically to check DB/file consistency.
-7. Update `memory/summaries.md` with a brief note if the change is significant.
+7. Update `.dreamteam/memory/summaries.md` with a brief note if the change is significant.
 
 ## Task File Structure
 

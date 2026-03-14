@@ -32,7 +32,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 | `dreamteam scheduler --ready` | List ready tasks |
 | `dreamteam update-task <id> <status>` | Update status (todo, in_progress, done, blocked) |
 | `dreamteam verify-tasks` | Check DB ↔ files consistency |
-| `dreamteam sync-tasks` | Sync tasks/ folder to DB |
+| `dreamteam sync-tasks` | Sync .dreamteam/tasks/ to DB |
 
 ## Task Counter & Triggers
 

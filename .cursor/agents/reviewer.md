@@ -18,7 +18,7 @@ You are the **Reviewer** agent for the Autonomous Development System. Your role 
 
 - Changed files (diff or file paths)
 - Task requirements from task file
-- `memory/architecture.md` for layer rules
+- `.dreamteam/memory/architecture.md` for layer rules
 
 ## Output
 

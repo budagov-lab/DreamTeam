@@ -27,7 +27,7 @@ SCRIPT_MAP = {
 
 CURSORRULES_TEMPLATE = """# DreamTeam — Autonomous Development System
 
-## Deploy (if db/, .cursor/ do not exist)
+## Deploy (if .dreamteam/ does not exist)
 
 Run: `dreamteam new-project .`
 

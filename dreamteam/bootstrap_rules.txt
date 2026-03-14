@@ -4,7 +4,7 @@ When this file is present, the project uses DreamTeam Autonomous Development Sys
 
 ## First step: Deploy environment
 
-If db/, memory/, tasks/, .cursor/ do NOT exist, run:
+If .dreamteam/ does NOT exist, run:
 ```
 dreamteam new-project .
 ```

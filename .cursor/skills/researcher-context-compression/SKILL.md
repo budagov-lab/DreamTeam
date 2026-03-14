@@ -13,16 +13,16 @@ description: Summarizes project state, updates architecture, compresses context.
 
 ## Workflow
 
-1. **Read:** Recent task files, `memory/summaries.md`, `memory/architecture.md`
+1. **Read:** Recent task files, `.dreamteam/memory/summaries.md`, `.dreamteam/memory/architecture.md`
 2. **Summarize:** Condense last 20 tasks into a brief summary
 3. **Update architecture:** Add new modules, dependencies, ownership
 4. **Compress:** Remove redundant or outdated content
-5. **Write:** Update `memory/summaries.md` and `memory/architecture.md`
+5. **Write:** Update `.dreamteam/memory/summaries.md` and `.dreamteam/memory/architecture.md`
 
 ## Output
 
-- Updated `memory/summaries.md` (history, progress)
-- Updated `memory/architecture.md` (modules, dependencies, rules)
+- Updated `.dreamteam/memory/summaries.md` (history, progress)
+- Updated `.dreamteam/memory/architecture.md` (modules, dependencies, rules)
 
 ## Rules
 

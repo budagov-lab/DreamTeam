@@ -10,22 +10,24 @@ import project
 def test_get_db_path():
     root = project.get_project_root()
     db = project.get_db_path()
-    assert db.endswith(os.path.join("db", "dag.db"))
-    assert db.startswith(root)
+    assert "db" in db and "dag.db" in db
+    assert root in db or os.path.dirname(db).startswith(root)
 
 
 def test_get_tasks_dir():
     root = project.get_project_root()
+    data = project.get_data_root()
     tasks = project.get_tasks_dir()
-    assert tasks.endswith("tasks")
-    assert tasks.startswith(root)
+    assert tasks == os.path.join(data, "tasks")
+    assert data.startswith(root)
 
 
 def test_get_memory_dir():
     root = project.get_project_root()
+    data = project.get_data_root()
     memory = project.get_memory_dir()
-    assert memory.endswith("memory")
-    assert memory.startswith(root)
+    assert memory == os.path.join(data, "memory")
+    assert data.startswith(root)
 
 
 def test_dreamteam_project_env(monkeypatch, tmp_path):

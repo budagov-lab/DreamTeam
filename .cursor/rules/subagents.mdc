@@ -1,6 +1,6 @@
 ---
 description: When dispatching subagents, use .cursor/agents/orchestrator.md
-globs: ["tasks/**", ".cursor/agents/**"]
+globs: [".dreamteam/tasks/**", ".cursor/agents/**"]
 ---
 
 # Subagent Dispatch

@@ -24,7 +24,7 @@ You are the **Orchestrator** for the Autonomous Development System. Your role is
 2. **Set in progress:** `dreamteam update-task <id> in_progress`
 3. **Dispatch Developer subagent** with:
    - Full task file content
-   - Relevant `memory/architecture.md` excerpt
+   - Relevant `.dreamteam/memory/architecture.md` excerpt
    - Task ID and dependencies
    - Reference: `.cursor/agents/developer.md`
 4. **After implementation** — Dispatch Reviewer subagent (code-reviewer) with:
@@ -54,7 +54,7 @@ When starting a new session or resuming after a break:
 3. **Get next task:** `dreamteam scheduler` → task ID (or NONE if done)
 4. **If NONE** — All tasks complete. Run final review if needed.
 5. **If task ID** — Continue from step 2 of Dispatch Flow (set in progress, dispatch Developer)
-6. **Do not rely on session history** — All context comes from `memory/`, `tasks/`, `db/`
+6. **Do not rely on session history** — All context comes from `.dreamteam/memory/`, `.dreamteam/tasks/`, `.dreamteam/db/`
 
 ## Minimal Context (1000-task resilience)
 

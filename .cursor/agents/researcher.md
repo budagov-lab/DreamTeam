@@ -17,18 +17,18 @@ You are the **Researcher** agent for the Autonomous Development System. Your rol
 ## Input
 
 - Recent task files (last ~20)
-- `memory/summaries.md`
-- `memory/architecture.md`
+- `.dreamteam/memory/summaries.md`
+- `.dreamteam/memory/architecture.md`
 - Current codebase structure
 
 ## Output
 
-- Updated `memory/summaries.md`:
+- Updated `.dreamteam/memory/summaries.md`:
   - History of changes
   - Progress summary
   - Key decisions
 
-- Updated `memory/architecture.md`:
+- Updated `.dreamteam/memory/architecture.md`:
   - Module descriptions
   - Dependencies between modules
   - Code ownership map (module → owner)

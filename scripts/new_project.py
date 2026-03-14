@@ -52,15 +52,13 @@ def create_project(path: str) -> str:
     root = os.path.abspath(path)
     os.makedirs(root, exist_ok=True)
 
+    data_root = os.path.join(root, ".dreamteam")
+    os.makedirs(data_root, exist_ok=True)
     dirs = ["db", "memory", "tasks", "docs", "docs/epics"]
     for d in dirs:
-        os.makedirs(os.path.join(root, d), exist_ok=True)
+        os.makedirs(os.path.join(data_root, d), exist_ok=True)
 
-    marker = os.path.join(root, ".dreamteam")
-    with open(marker, "w") as f:
-        f.write("")
-
-    # Copy .cursor (agents, skills, rules)
+    # Copy .cursor (agents, skills, rules) — stays at project root for Cursor IDE
     cursor_dest = os.path.join(root, ".cursor")
     if os.path.normpath(CURSOR_SOURCE) == os.path.normpath(cursor_dest):
         pass  # Same path (new-project . from DreamTeam root) — keep existing .cursor
@@ -72,18 +70,18 @@ def create_project(path: str) -> str:
         os.makedirs(cursor_dest, exist_ok=True)
         print("Warning: .cursor not found in DreamTeam, created empty .cursor/", file=sys.stderr)
 
-    arch = os.path.join(root, "memory", "architecture.md")
+    arch = os.path.join(data_root, "memory", "architecture.md")
     if not os.path.exists(arch):
         with open(arch, "w", encoding="utf-8") as f:
             f.write(ARCHITECTURE_TEMPLATE)
 
-    summaries = os.path.join(root, "memory", "summaries.md")
+    summaries = os.path.join(data_root, "memory", "summaries.md")
     if not os.path.exists(summaries):
         with open(summaries, "w", encoding="utf-8") as f:
             f.write(SUMMARIES_TEMPLATE)
 
     # Init db
-    db_path = os.path.join(root, "db", "dag.db")
+    db_path = os.path.join(data_root, "db", "dag.db")
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
     import sqlite3
     conn = sqlite3.connect(db_path)
@@ -120,7 +118,7 @@ def main() -> None:
     print()
     print("Or set env: DREAMTEAM_PROJECT=" + root)
     print()
-    print("Each project has its own: db/, memory/, tasks/, .cursor/ (agents, skills, rules) — brains are isolated.")
+    print("Each project has its own: .dreamteam/ (db, memory, tasks), .cursor/ (agents, rules) — brains are isolated.")
 
 
 if __name__ == "__main__":

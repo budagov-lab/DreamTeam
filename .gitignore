@@ -32,10 +32,7 @@ env/
 *.swo
 
 # Project-specific (DreamTeam repo = engine only, no project data)
-db/
-memory/
-tasks/
-.dreamteam
+.dreamteam/
 
 # Test projects (optional - remove if you want to track)
 # empty-test/

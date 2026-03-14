@@ -17,7 +17,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 **How to dispatch:**
 - Use `mcp_task` with `subagent_type`: `generalPurpose` (implementation), `code-reviewer` (review)
 - Pass full task text and context — subagent must not re-read files
-- For Developer: include task ID, task file content, `memory/architecture.md` snippet
+- For Developer: include task ID, task file content, `.dreamteam/memory/architecture.md` snippet
 - For Reviewer: include changed files, task requirements, architecture rules
 
 **Workflow:**
@@ -57,7 +57,7 @@ Project skills in `.cursor/skills/`:
 ## Rules
 
 - `.cursor/rules/autonomous-dev-system.mdc` — Always apply
-- `.cursor/rules/task-execution.mdc` — When editing `tasks/**/*.md`
+- `.cursor/rules/task-execution.mdc` — When editing `.dreamteam/tasks/**/*.md`
 - `.cursor/agents/orchestrator.md` — When dispatching Developer/Reviewer/Planner (load this prompt)
 
 ## Commands

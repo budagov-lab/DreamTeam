@@ -17,8 +17,8 @@ You are the **Meta Planner** agent for the Autonomous Development System. Your r
 ## Input
 
 - Current DAG state (tasks, statuses, dependencies)
-- `memory/architecture.md`
-- `memory/summaries.md`
+- `.dreamteam/memory/architecture.md`
+- `.dreamteam/memory/summaries.md`
 - Recent task completion patterns
 
 ## Output

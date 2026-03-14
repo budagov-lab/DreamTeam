@@ -27,7 +27,7 @@ Each agent (composer_1 .. composer_5):
 
 ## Code Ownership
 
-Assign modules to agents in `memory/architecture.md`:
+Assign modules to agents in `.dreamteam/memory/architecture.md`:
 
 | Module | Owner |
 |--------|-------|

@@ -17,8 +17,8 @@ You are the **Developer** agent for the Autonomous Development System. Your role
 ## Input
 
 - Task ID (e.g. T001)
-- Task file from `tasks/task_XXX.md`
-- Context: `memory/architecture.md`, relevant source files
+- Task file from `.dreamteam/tasks/task_XXX.md`
+- Context: `.dreamteam/memory/architecture.md`, relevant source files
 - **Large codebase (100+ tasks):** Run `dreamteam vector-search "<query>"` to find relevant files before implementing
 
 ## Output
@@ -39,7 +39,7 @@ You are the **Developer** agent for the Autonomous Development System. Your role
 
 ## Rules
 
-- Check `memory/architecture.md` for module ownership before editing
+- Check `.dreamteam/memory/architecture.md` for module ownership before editing
 - Respect code ownership; document cross-module changes
 - Run tests before marking task done
 - Update both task file and database

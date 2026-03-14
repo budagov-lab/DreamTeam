@@ -27,7 +27,7 @@ cd DreamTeam
 # 3. Open in Cursor → /start + your goal → dreamteam run-next
 ```
 
-Setup creates db/, memory/, tasks/, .cursor/. Open folder in Cursor, run **`/start`** + goal, then `dreamteam run-next`.
+Setup creates `.dreamteam/` (db, memory, tasks) and `.cursor/`. Open folder in Cursor, run **`/start`** + goal, then `dreamteam run-next`.
 
 **Or:** `python -m dreamteam` if `dreamteam` not in PATH. See [INSTALL.md](INSTALL.md).
 
@@ -43,7 +43,7 @@ Setup creates db/, memory/, tasks/, .cursor/. Open folder in Cursor, run **`/sta
 
 ## Projects
 
-Each project has its own **db/**, **memory/**, **tasks/** — brains are isolated.
+Each project has its own **`.dreamteam/`** (db, memory, tasks) — brains are isolated.
 
 - `dreamteam new-project .` — deploy in current folder
 - Project root: `DREAMTEAM_PROJECT` env, or `.dreamteam` in cwd/parents
@@ -52,11 +52,8 @@ Each project has its own **db/**, **memory/**, **tasks/** — brains are isolate
 
 ```
 your-project/
-  .dreamteam     — Project marker
+  .dreamteam/    — project data (db, memory, tasks, docs)
   .cursor/       — agents, rules
-  db/            — dag.db (tasks, metrics, vector_code)
-  memory/        — architecture.md, summaries.md
-  tasks/         — task_001.md, task_002.md, ...
   src/           — your code
 ```
 

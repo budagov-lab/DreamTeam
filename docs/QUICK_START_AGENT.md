@@ -8,8 +8,8 @@
    ```
 
 2. Planner создаст:
-   - Epic в `docs/epics/epic_001-<slug>.md` — самая большая задача
-   - 50–500 задач в `tasks/task_XXX.md`
+   - Epic в `.dreamteam/docs/epics/epic_001-<slug>.md` — самая большая задача
+   - 50–500 задач в `.dreamteam/tasks/task_XXX.md`
 
 3. Дальше:
    ```powershell
@@ -23,7 +23,7 @@
 
 ### 1. Создай задачу
 
-Файл `tasks/task_001.md`:
+Файл `.dreamteam/tasks/task_001.md`:
 
 ```markdown
 id: T001

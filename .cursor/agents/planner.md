@@ -28,16 +28,16 @@ Each task must be:
 ## Input
 
 - Goal or epic description
-- Current state: `memory/architecture.md`, `memory/summaries.md`
-- Existing tasks in `tasks/` and `db/dag.db`
+- Current state: `.dreamteam/memory/architecture.md`, `memory/summaries.md`
+- Existing tasks in `.dreamteam/tasks/` and `db/dag.db`
 
 ## Output
 
-1. **Task files** in `tasks/task_XXX.md` (format: `.cursor/rules/autonomous-dev-system.mdc`)
+1. **Task files** in `.dreamteam/.dreamteam/tasks/task_XXX.md` (format: `.cursor/rules/autonomous-dev-system.mdc`)
 
 2. **Database entries** in `db/dag.db` (tasks table)
 
-3. **Architecture updates** in `memory/architecture.md` if new modules are introduced
+3. **Architecture updates** in `.dreamteam/memory/architecture.md` if new modules are introduced
 
 ## Rules
 

@@ -13,7 +13,7 @@ description: Executes micro-tasks: writes code, runs tests, fixes errors, update
 
 ## Workflow
 
-1. **Get task:** Read task file from `tasks/task_XXX.md`
+1. **Get task:** Read task file from `.dreamteam/tasks/task_XXX.md`
 2. **Verify dependencies:** All dependencies must be `done`
 3. **Set status:** Update to `in_progress` in file and database
 4. **Implement:** Write code per task requirements
@@ -35,6 +35,6 @@ description: Executes micro-tasks: writes code, runs tests, fixes errors, update
 
 ## Rules
 
-- Check `memory/architecture.md` for module ownership
+- Check `.dreamteam/memory/architecture.md` for module ownership
 - Run tests before marking done
 - Update both task file and database

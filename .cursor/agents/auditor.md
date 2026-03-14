@@ -17,7 +17,7 @@ You are the **Auditor** agent for the Autonomous Development System. Your role i
 ## Input
 
 - Full codebase
-- `memory/architecture.md`
+- `.dreamteam/memory/architecture.md`
 - Task DAG from database
 
 ## Output
@@ -29,7 +29,7 @@ You are the **Auditor** agent for the Autonomous Development System. Your role i
   - Orphaned or dead code
 
 - Refactor tasks for critical issues
-- Updated `memory/architecture.md` with findings
+- Updated `.dreamteam/memory/architecture.md` with findings
 
 ## Checks
 
