@@ -84,7 +84,7 @@ def create_project(path: str) -> str:
     db_path = os.path.join(data_root, "db", "dag.db")
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
     import sqlite3
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10.0)
     c = conn.cursor()
     for t in ("tasks", "metrics", "context_graph", "vector_code", "memory"):
         c.execute(f"DROP TABLE IF EXISTS {t}")

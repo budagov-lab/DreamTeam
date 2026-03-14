@@ -56,7 +56,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 | `dreamteam recent-tasks [N]` | List last N done tasks from DB |
 | `dreamteam dag-state` | DAG state for Meta Planner (tasks, metrics from DB) |
 
-**MCP dreamteam-db** — Use tools dreamteam_get_task, dreamteam_get_memory, dreamteam_set_memory, dreamteam_get_dag_state, dreamteam_recent_tasks instead of Terminal when available. See docs/MCP_DB_BRIDGE.md.
+**MCP dreamteam-db** — Use tools dreamteam_get_task, dreamteam_get_memory, dreamteam_set_memory, dreamteam_get_dag_state, dreamteam_recent_tasks instead of Terminal when available.
 
 **Researcher, Meta Planner, Auditor** read/write memory via MCP or Terminal. Orchestrator runs `memory-to-files` after Researcher.
 
@@ -104,4 +104,4 @@ python -m dreamteam run-next
 
 **Default: sequential.** One task, one subagent at a time. No parallel terminals.
 
-For advanced parallel workflows (git worktrees), see `docs/GIT_WORKTREES.md`.
+For 500+ tasks: use `/run` — Main Orchestrator dispatches Left/Right Sub-orchestrators in batches of 50.

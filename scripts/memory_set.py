@@ -19,7 +19,7 @@ def set_memory(key: str, content: str) -> bool:
 
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     import sqlite3
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     # Ensure memory table exists

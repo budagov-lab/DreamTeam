@@ -14,9 +14,10 @@ def main() -> None:
         sys.exit(1)
 
     import sqlite3
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
+    missing = []
     try:
         cursor.execute("PRAGMA table_info(tasks)")
         if not any(col[1] == "content" for col in cursor.fetchall()):

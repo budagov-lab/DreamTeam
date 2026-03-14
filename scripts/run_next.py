@@ -69,13 +69,17 @@ def main() -> None:
             print("FAIL: Tasks still missing content. Run: python -m dreamteam sync-tasks", file=sys.stderr)
             sys.exit(1)
 
-    # 3. Quick integrity fix: tasks_completed must match actual done count
+    # 3. Quick integrity fix + ensure indexes (migration for existing DBs)
     try:
         import sqlite3
         db_path = project.get_db_path()
         if os.path.exists(db_path):
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(db_path, timeout=10.0)
             cur = conn.cursor()
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_tasks_status_priority_id ON tasks(status, priority DESC, id)"
+            )
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)")
             cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
             m = cur.fetchone()
             cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'done'")
@@ -102,7 +106,7 @@ def main() -> None:
             import sqlite3
             db_path = project.get_db_path()
             if os.path.exists(db_path):
-                conn = sqlite3.connect(db_path)
+                conn = sqlite3.connect(db_path, timeout=10.0)
                 cur = conn.cursor()
                 cur.execute("SELECT COUNT(*) FROM tasks")
                 total = cur.fetchone()[0]
@@ -126,7 +130,7 @@ def main() -> None:
         import sqlite3
         db_path = project.get_db_path()
         if os.path.exists(db_path):
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(db_path, timeout=10.0)
             cur = conn.cursor()
             cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
             row = cur.fetchone()
@@ -152,7 +156,7 @@ def main() -> None:
     print("4. If update-task prints TRIGGER_RESEARCHER:")
     print("   Researcher agent -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
     print()
-    print("5. For new session (every ~20-50 tasks): python -m dreamteam verify-tasks ; python -m dreamteam verify-integrity")
+    print("5. Checkpoint every 50-60 tasks: new chat, verify-tasks, then 'Continue'")
     print("=" * 60)
 
 

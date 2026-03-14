@@ -26,7 +26,7 @@ def status() -> int:
         print("Database not found. Run: python -m dreamteam init-db", file=sys.stderr)
         return 0
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     count = get_count(cursor)
     cursor.execute("SELECT COUNT(*) FROM tasks")

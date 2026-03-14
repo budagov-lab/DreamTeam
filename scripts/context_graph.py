@@ -17,7 +17,7 @@ def add_module(module: str, functions: str | list, dependencies: str | list) -> 
     if isinstance(dependencies, list):
         dependencies = json.dumps(dependencies)
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM context_graph WHERE module = ?", (module,))
     cursor.execute(
@@ -34,7 +34,7 @@ def list_modules() -> None:
         print("Database not found. Run: dreamteam init-db", file=sys.stderr)
         return
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     cursor.execute("SELECT module, functions, dependencies FROM context_graph")
     rows = cursor.fetchall()

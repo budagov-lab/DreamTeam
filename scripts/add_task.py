@@ -59,16 +59,17 @@ def _ensure_content_column(cursor: sqlite3.Cursor) -> None:
         cursor.execute("ALTER TABLE tasks ADD COLUMN content TEXT")
 
 
-def add_task(task_data: dict, upsert: bool = True) -> bool:
-    """Insert or update task in database."""
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH, timeout=10.0)
-    cursor = conn.cursor()
-
+def add_task_to_cursor(
+    cursor: sqlite3.Cursor,
+    task_data: dict,
+    now: str | None = None,
+    upsert: bool = True,
+) -> None:
+    """Insert or update task using existing cursor. No commit. For batch sync."""
+    if now is None:
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     content = task_data.get("content", "")
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     _ensure_content_column(cursor)
-
     if upsert:
         cursor.execute(
             """
@@ -113,9 +114,19 @@ def add_task(task_data: dict, upsert: bool = True) -> bool:
                 now,
             ),
         )
-    conn.commit()
-    conn.close()
-    return True
+
+
+def add_task(task_data: dict, upsert: bool = True) -> bool:
+    """Insert or update task in database (single task, commits)."""
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
+    cursor = conn.cursor()
+    try:
+        add_task_to_cursor(cursor, task_data, upsert=upsert)
+        conn.commit()
+        return True
+    finally:
+        conn.close()
 
 
 def main() -> None:

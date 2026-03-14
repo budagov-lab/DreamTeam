@@ -76,7 +76,7 @@ def index_codebase() -> None:
         sys.exit(1)
 
     # Ensure vector_code table exists (init_db may have been run before it was added)
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS vector_code (
             path TEXT, chunk TEXT, embedding BLOB,
@@ -101,7 +101,7 @@ def index_codebase() -> None:
     paths = [c[0] for c in chunks]
     embeddings = model.encode(texts)
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM vector_code")
     for (path, chunk), emb in zip(zip(paths, texts), embeddings):

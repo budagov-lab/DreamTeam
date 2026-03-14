@@ -23,7 +23,7 @@ Result: `my-app/` contains only `.dreamteam/`, `.cursor/`, and your code. No eng
 
 ```
 my-app/
-├── .dreamteam/   # db, memory, tasks, docs
+├── .dreamteam/   # db, memory, tasks
 ├── .cursor/      # agents, rules
 └── src/          # your code
 ```

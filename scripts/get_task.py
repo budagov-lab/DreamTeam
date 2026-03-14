@@ -15,7 +15,7 @@ def get_task(task_id: str) -> str | None:
         return _get_from_file(task_id)
 
     import sqlite3
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     try:
         cursor.execute("PRAGMA table_info(tasks)")

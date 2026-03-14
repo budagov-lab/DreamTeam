@@ -37,10 +37,8 @@ env/
 # Integration test (system E2E)
 integration-test/
 
-# Internal docs (not for public)
-docs/AUDIT_*.md
-docs/GITHUB_PUBLISH.md
-docs/epics/
+# Internal docs (not for public, exclude from GitHub)
+docs/
 
 # OS
 .DS_Store

@@ -33,11 +33,11 @@ One command at a time. Run tests before approving. If tests fail, report as Crit
 
 ## Output
 
-Structured feedback with severity:
+**Return format (CRITICAL for context):** One line only.
+- **APPROVED** — or —
+- **CRITICAL:** [1–3 bullet points, max 50 words total]
 
-- 🔴 **Critical:** Must fix before task can be marked done
-- 🟡 **Suggestion:** Consider improving
-- 🟢 **Nice to have:** Optional enhancement
+No code paste. No long summary. Orchestrator context grows with every subagent return.
 
 ## Checklist
 

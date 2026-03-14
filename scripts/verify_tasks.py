@@ -17,7 +17,7 @@ def get_db_tasks():
     if not os.path.exists(DB_PATH):
         return {}
     import sqlite3
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     conn.row_factory = lambda c, r: dict(zip([col[0] for col in c.description], r))
     cursor = conn.cursor()
     cursor.execute("SELECT id, title, status, priority, dependencies, owner FROM tasks")

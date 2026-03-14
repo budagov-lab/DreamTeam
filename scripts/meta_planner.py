@@ -15,7 +15,7 @@ def get_dag_state() -> dict:
     if not os.path.exists(DB_PATH):
         return {}
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute(

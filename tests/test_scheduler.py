@@ -29,7 +29,7 @@ def test_get_next_task_empty_db(monkeypatch, tmp_path):
     import db as db_mod
     monkeypatch.setattr(db_mod, "DB_PATH", str(db_path))
 
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10.0)
     conn.executescript("""
         CREATE TABLE tasks (id TEXT PRIMARY KEY, title TEXT, status TEXT, priority INTEGER, dependencies TEXT, owner TEXT, created_at DATETIME, updated_at DATETIME);
         CREATE TABLE metrics (metric TEXT PRIMARY KEY, value INTEGER);
@@ -47,7 +47,7 @@ def test_get_next_task_returns_ready(monkeypatch, tmp_path):
     import db as db_mod
     monkeypatch.setattr(db_mod, "DB_PATH", str(db_path))
 
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10.0)
     conn.executescript("""
         CREATE TABLE tasks (id TEXT PRIMARY KEY, title TEXT, status TEXT, priority INTEGER, dependencies TEXT, owner TEXT, created_at DATETIME, updated_at DATETIME);
         CREATE TABLE metrics (metric TEXT PRIMARY KEY, value INTEGER);
@@ -67,7 +67,7 @@ def test_get_next_task_waits_for_deps(monkeypatch, tmp_path):
     import db as db_mod
     monkeypatch.setattr(db_mod, "DB_PATH", str(db_path))
 
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10.0)
     conn.executescript("""
         CREATE TABLE tasks (id TEXT PRIMARY KEY, title TEXT, status TEXT, priority INTEGER, dependencies TEXT, owner TEXT, created_at DATETIME, updated_at DATETIME);
         CREATE TABLE metrics (metric TEXT PRIMARY KEY, value INTEGER);

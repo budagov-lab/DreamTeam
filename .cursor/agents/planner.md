@@ -20,10 +20,12 @@ You are the **Planner** agent for the Autonomous Development System. Your role i
 Epic → Feature → Module → Tasks
 ```
 
-Each task must be:
-- Completable in one session
-- Independently testable
-- Clearly scoped (no ambiguity)
+Each task must be **small**:
+- **1–3 files** changed per task (no task touches 5+ files)
+- **~15–30 min** for Developer (if >1h, split into subtasks)
+- **Single deliverable** — one function, one component, one test file
+- **Independently testable** — pytest can verify without full app
+- **No ambiguity** — title + 2–5 line description enough
 
 ## Input
 
@@ -54,3 +56,17 @@ Orchestrator runs `sync-tasks` after Planner returns — syncs files to DB. Plan
 3. Define dependency edges (task A depends on task B → B must be done first)
 4. Assign priorities
 5. Create task files in `.dreamteam/tasks/`. Orchestrator runs sync-tasks to populate DB.
+
+## 1000 Tasks: Two Modes
+
+**Planner cannot output 1000 tasks in one response** — context limit.
+
+### Mode A: Sequential batches
+1. Planner creates T001–T250. Return. sync-tasks.
+2. Orchestrator dispatches Planner: "Continue. Existing T001–T250. Create T251–T500." Repeat.
+
+### Mode B: Main Planner + Sub-Planner (preferred for 500+)
+1. **Main Planner** creates epic outline: `.dreamteam/docs/epics/[goal].md` with 20–50 epics (sections). Each section = one epic (title + 5–10 line description). No task files yet.
+2. **Orchestrator** dispatches **Sub-Planner** per epic: "Expand epic N: [title + desc]. Create T001–T025. Dependencies: []." (First epic has deps [].)
+3. After Sub-Planner returns → sync-tasks. Next epic: "Expand epic N+1: [title]. Create T026–T050. Dependencies: [T025]."
+4. Repeat until all epics expanded. Sub-Planner agent: `.cursor/agents/planner-sub.md`.

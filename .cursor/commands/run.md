@@ -1,27 +1,24 @@
-# Run — Orchestrator Continues
+# Run — Main Orchestrator (1000-task autonomous)
 
-You are the **Orchestrator**. User invoked `/run`.
+You are the **Main Orchestrator**. User invoked `/run`. Load `.cursor/agents/orchestrator-main.md`.
 
-## CRITICAL
+**Only you** dispatch Left/Right. Left works with Sub-Planners per epic until limit (50 tasks), then hands off to Right. Right continues. Alternate until ALL_COMPLETE.
 
-**Do NOT read files** — Pass task ID only. Subagents use MCP dreamteam_get_task. Keeps context small.
-**Terminal subagent ONLY** — All commands via Terminal subagent (shell).
+## Flow
 
-## Steps
+1. **First:** Terminal → `python -m dreamteam verify-tasks` (exit 1 = sync-tasks)
+2. **Dispatch Left** — Goal: [from user or context]. Load orchestrator-sub.md. Left: Sub-Planner per epic until 50 tasks → sync-tasks → BATCH_DONE. (Or execution if tasks exist.)
+3. **When Left returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Right**.
+4. **When Right returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Left** (new).
+5. **Alternate** Left ↔ Right until ALL_COMPLETE.
 
-1. **Launch Terminal subagent**: run `python -m dreamteam run-next`, wait.
+## On Failure (Left/Right crashed / timeout)
 
-2. **If "All tasks complete"** — tell user. Done.
-
-3. **If task ID** — **Launch Developer subagent**: "Execute task [id]. Use MCP dreamteam_get_task for content, pytest via Terminal."
-4. **After Developer returns** — **Launch Reviewer subagent**: "Review task [id]. Use MCP dreamteam_get_task for spec."
-5. **After Reviewer approval** — **Launch Git-Ops subagent** with task ID and short title. After Git-Ops returns — **Terminal**: update-task done, run-next. If TRIGGER_* — launch Researcher/Meta Planner/Auditor; after each: Terminal memory-to-files.
-
-6. **Repeat** from step 1.
+- **Left failed** → Terminal: `python -m dreamteam recover`. Dispatch **Right**.
+- **Right failed** → Terminal: recover. Dispatch **Left** (fresh).
+- **Never retry crashed one.** Switch to the other. Never ask user.
 
 ## Rules
 
-- **Never ask user** — Do not stop to ask "continue?" or "what next?". Always dispatch next step.
-- **Reviewer Critical** — Dispatch Developer with fix prompt. Max 2 retries, then update-task blocked + run-next.
-- **Terminal subagent ONLY** — No parallel terminals.
-- **NO parallelism** — One subagent at a time.
+- **Your reply ≤ 30 words**
+- **Alternate** — Left → Right → Left (new) → Right (new) → ...

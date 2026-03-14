@@ -15,7 +15,7 @@ def _get_memory_content(key: str) -> str | None:
     """Get memory from DB, fallback to file."""
     if os.path.exists(DB_PATH):
         import sqlite3
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(DB_PATH, timeout=10.0)
         cursor = conn.cursor()
         try:
             cursor.execute("SELECT content FROM memory WHERE key = ?", (key,))

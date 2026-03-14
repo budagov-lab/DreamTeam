@@ -46,7 +46,7 @@ def get_recent_tasks(limit: int = 20) -> list[dict]:
     path = project.get_db_path()
     if not os.path.exists(path):
         return []
-    conn = sqlite3.connect(path)
+    conn = sqlite3.connect(path, timeout=10.0)
     cursor = conn.cursor()
     try:
         cursor.execute("PRAGMA table_info(tasks)")

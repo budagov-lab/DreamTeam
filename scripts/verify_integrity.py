@@ -30,7 +30,7 @@ def verify() -> tuple[list[str], bool]:
         errors.append("Database not found. Run: dreamteam init-db")
         return errors, False
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cur = conn.cursor()
 
     # 1. tasks_completed must equal count of done tasks

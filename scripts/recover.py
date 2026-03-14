@@ -32,7 +32,7 @@ def reset_stuck_tasks(minutes: int = STUCK_MINUTES) -> list[str]:
     if not os.path.exists(DB_PATH):
         return []
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     cutoff = (datetime.now(timezone.utc) - timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute(
@@ -52,7 +52,7 @@ def fix_tasks_completed_metric() -> bool:
     """Set metrics.tasks_completed = count of done tasks. Fixes drift."""
     if not os.path.exists(DB_PATH):
         return False
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'done'")
     actual = cur.fetchone()[0]
@@ -69,7 +69,7 @@ def reset_task(task_id: str) -> bool:
     """Reset specific task from in_progress to todo."""
     if not os.path.exists(DB_PATH):
         return False
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("UPDATE tasks SET status = 'todo', updated_at = ? WHERE id = ? AND status = 'in_progress'", (now, task_id))
@@ -103,7 +103,7 @@ def main() -> None:
 
     # 2. Fix tasks_completed metric if drifted
     if os.path.exists(DB_PATH):
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(DB_PATH, timeout=10.0)
         cur = conn.cursor()
         cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
         m = cur.fetchone()

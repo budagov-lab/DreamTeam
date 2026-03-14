@@ -8,6 +8,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 **When to dispatch subagents:**
 - **Planner** — New goal in chat, epic decomposition, task breakdown
+- **Planner-Sub** — Expand one epic into 15–25 subtasks (dispatch after Main Planner creates epic outline)
 - **Developer** — Task from scheduler ready for implementation
 - **Reviewer** — After each task completion (spec compliance, then code quality)
 - **Git-Ops** — After Reviewer approval — git commit (ONLY Git-Ops does commits)
@@ -35,8 +36,11 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 | Role | Prompt File | When to Use |
 |------|-------------|-------------|
-| Orchestrator | `.cursor/agents/orchestrator.md` | Dispatching subagents, coordinating task pipeline |
+| Main Orchestrator | `.cursor/agents/orchestrator-main.md` | Dispatches Sub-Orchestrators (50 tasks each), minimal context |
+| Sub-orchestrator (Left/Right) | `.cursor/agents/orchestrator-sub.md` | Re-checks DB on start, runs 50-task batch |
+| Orchestrator | `.cursor/agents/orchestrator.md` | Single-session flow (or when Sub loads it) |
 | Planner | `.cursor/agents/planner.md` | New goal, epic, or task decomposition |
+| Planner-Sub | `.cursor/agents/planner-sub.md` | Expand one epic into 15–25 subtasks |
 | Developer | `.cursor/agents/developer.md` | Executing a task from scheduler |
 | Reviewer | `.cursor/agents/reviewer.md` | After task completion, code review |
 | Git-Ops | `.cursor/agents/git-ops.md` | Git commit (ONLY agent that does commits) |
@@ -50,6 +54,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 Project skills in `.cursor/skills/`:
 
 - `planner-task-decomposition`
+- `planner-sub-expand`
 - `developer-execution`
 - `researcher-context-compression`
 - `meta-planner-optimization`
@@ -68,4 +73,4 @@ Project skills in `.cursor/skills/`:
 
 ## Commands
 
-Use `python -m dreamteam`. See COMMANDS.md.
+Use `python -m dreamteam`. See guide/COMMANDS.md.

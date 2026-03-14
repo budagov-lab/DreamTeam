@@ -12,15 +12,17 @@ You are the **Orchestrator**. User invoked `/start` with a goal.
 
 1. **Extract goal** from user message. If unclear, ask.
 
-2. **Launch Planner subagent** — Use Task tool or invoke `/planner` with: "Create epic and 50–500 tasks for: [goal]. Write to .dreamteam/docs/epics/ and .dreamteam/tasks/. Format: .cursor/rules/autonomous-dev-system.mdc."
+2. **Planning (choose one):**
+   - **<500 tasks:** Launch Planner — "Create 200–250 tasks for: [goal]. Small tasks: 1–3 files, ~15–30 min. Write to .dreamteam/tasks/. T001 dependencies: []." After return: sync-tasks. If more needed, Planner again.
+   - **500+ tasks:** Load orchestrator-main.md. **Dispatch Left** with goal. Left: Planner (epic outline) → Sub-Planner per epic until 50 → sync-tasks → BATCH_DONE. Main hands off to Right. Right: Sub-Planner next epics until 50. Alternate until all planned. Then execution (Left 50, Right 50).
+3. **After planning done** — Terminal: `sync-tasks` (if not done by Left/Right).
+4. **Then** — Terminal: `run-next`, read task ID. (First task is always T001.)
 
-3. **After Planner returns** — **Launch Terminal subagent** (shell): run `python -m dreamteam sync-tasks`, wait. Then run `python -m dreamteam run-next`, wait. Read task ID from output. (First task is always T001 — Planner must give T001 dependencies: [].)
+5. **Launch Developer subagent** — "Execute task [id]. Use MCP dreamteam_get_task for content, pytest via Terminal."
+6. **After Developer returns** — **Launch Reviewer subagent** (code-reviewer): "Review task [id]. Use MCP dreamteam_get_task for spec."
+7. **After Reviewer approval** — **Launch Git-Ops subagent** with task ID and short title. After Git-Ops returns — **Terminal**: `update-task [id] done`, then `run-next`. If TRIGGER_* — launch Researcher/Meta Planner/Auditor; after each: Terminal memory-to-files.
 
-4. **Launch Developer subagent** — "Execute task [id]. Use MCP dreamteam_get_task for content, pytest via Terminal."
-5. **After Developer returns** — **Launch Reviewer subagent** (code-reviewer): "Review task [id]. Use MCP dreamteam_get_task for spec."
-6. **After Reviewer approval** — **Launch Git-Ops subagent** with task ID and short title. After Git-Ops returns — **Terminal**: `update-task [id] done`, then `run-next`. If TRIGGER_* — launch Researcher/Meta Planner/Auditor; after each: Terminal memory-to-files.
-
-7. **Repeat** 4–7 until "All tasks complete."
+8. **Repeat** 5–8 until "All tasks complete."
 
 ## Rules
 

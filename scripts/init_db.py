@@ -13,7 +13,7 @@ MEMORY_DIR = project.get_memory_dir()
 def init_db(reset: bool = False) -> None:
     """Create database and schema. If reset=True, drop existing tables first."""
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     if reset:
@@ -74,6 +74,12 @@ def init_db(reset: bool = False) -> None:
     cursor.execute(
         "INSERT OR IGNORE INTO metrics (metric, value) VALUES ('tasks_completed', 0)"
     )
+
+    # Indexes for scheduler (WHERE status, ORDER BY priority, id) and done count
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_tasks_status_priority_id ON tasks(status, priority DESC, id)"
+    )
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)")
 
     # Migration: copy memory from files to DB if memory table is empty
     cursor.execute("SELECT COUNT(*) FROM memory")

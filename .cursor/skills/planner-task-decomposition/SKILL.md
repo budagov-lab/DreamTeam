@@ -33,5 +33,6 @@ See `.cursor/rules/autonomous-dev-system.mdc`.
 ## Rules
 
 - No circular dependencies
-- Each task should be completable in one session
+- **Small tasks:** 1–3 files per task, ~15–30 min each, single deliverable
 - Dependencies must reference existing task IDs
+- **1000 tasks:** Create 200–250 per batch; return; Orchestrator dispatches again for next batch

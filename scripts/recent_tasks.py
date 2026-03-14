@@ -19,7 +19,7 @@ def main() -> None:
         sys.exit(1)
 
     import sqlite3
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     try:
         cursor.execute("PRAGMA table_info(tasks)")

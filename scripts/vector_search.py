@@ -23,7 +23,7 @@ def search(query: str, top_k: int = DEFAULT_TOP_K) -> list[tuple[str, str, float
         print("Database not found. Run: dreamteam init-db", file=sys.stderr)
         sys.exit(1)
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
     cursor.execute("SELECT path, chunk, embedding FROM vector_code")
     rows = cursor.fetchall()
