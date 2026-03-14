@@ -23,6 +23,13 @@ SCRIPT_MAP = {
     "vector-index": "vector_index.py",
     "vector-search": "vector_search.py",
     "git-commit": "git_commit.py",
+    "get-task": "get_task.py",
+    "verify-sync": "verify_sync.py",
+    "memory-get": "memory_get.py",
+    "memory-set": "memory_set.py",
+    "memory-to-files": "memory_to_files.py",
+    "recent-tasks": "recent_tasks.py",
+    "dag-state": "meta_planner.py",
 }
 
 
@@ -96,13 +103,20 @@ def main() -> None:
         print("  verify-tasks         Verify DB/file consistency")
         print("  recover              Recovery: sync, reset stuck, verify")
         print("  update-task <id> <status>  Update task status")
-        print("  task-counter         Increment counter, check triggers")
+        print("  task-counter         Show progress (tasks_completed / total)")
         print("  init-db              Initialize database")
         print("  check-memory         Validate memory file sizes")
         print("  current-project      Show current project root")
         print("  vector-index         Index codebase for semantic search")
         print("  vector-search <q>    Semantic search over indexed code")
         print("  git-commit <id> <msg>  Add, commit, push for task")
+        print("  get-task <id>         Get task content from DB")
+        print("  verify-sync           Verify tasks have content in DB")
+        print("  memory-get <key>      Get summaries/architecture from DB")
+        print("  memory-set <key> [file]  Set memory in DB (stdin or file)")
+        print("  memory-to-files      Sync memory from DB to files")
+        print("  recent-tasks [N]     List last N done tasks from DB")
+        print("  dag-state            DAG state for Meta Planner (from DB)")
         print("  bootstrap            Create .cursorrules in cwd (for empty project)")
         print()
         sys.exit(0)

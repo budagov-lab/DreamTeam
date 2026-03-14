@@ -4,30 +4,23 @@ You are the **Orchestrator**. User invoked `/run`.
 
 ## CRITICAL
 
-**First:** `python -m dreamteam run-next`. **Then** launch Developer subagent. Do NOT implement in this chat.
+**Terminal subagent ONLY** — All commands via Terminal subagent (shell). Do NOT run terminal yourself.
 
 ## Steps
 
-1. **Run:** `python -m dreamteam run-next`
+1. **Launch Terminal subagent**: run `python -m dreamteam run-next`, wait.
 
 2. **If "All tasks complete"** — tell user. Done.
 
-3. **If task ID** — read `.dreamteam/tasks/task_XXX.md`. **Launch Developer subagent** — Use Task tool or `/developer` with: "Execute task [id]: [paste full content]. Context: [architecture]. Implement now."
+3. **If task ID** — **Launch Developer subagent** with task ID, architecture. "Execute task [id]. Use MCP dreamteam_get_task (or Terminal get-task) for task content, then implement. Run pytest via Terminal when done. Context: [architecture]."
 
-4. **After Developer returns** — **Launch Reviewer subagent** (code-reviewer) with changed files, task requirements. Use Task tool or `/code-reviewer`.
+4. **After Developer returns** — **Launch Reviewer subagent** with changed files, task ID, architecture. Reviewer uses MCP or Terminal get-task if needed.
 
-5. **After Reviewer approval** — **Git commit & push:** run `python -m dreamteam git-commit <id> "<short title>"` or launch Git-Ops subagent. Then run:
-   ```
-   python -m dreamteam update-task <id> done
-   python -m dreamteam task-counter
-   python -m dreamteam run-next
-   ```
-   If task_counter prints TRIGGER_RESEARCHER — launch researcher, then `python -m dreamteam vector-index`, `python -m dreamteam check-memory`.
-   If TRIGGER_META_PLANNER — launch meta-planner. If TRIGGER_AUDITOR — launch auditor.
+5. **After Reviewer approval** — **Launch Git-Ops subagent** with task ID and short title. Git-Ops does commit. After Git-Ops returns — **Launch Terminal subagent**: update-task done. If TRIGGER_RESEARCHER: launch researcher, then memory-to-files, vector-index, check-memory. If TRIGGER_META_PLANNER: launch meta-planner. If TRIGGER_AUDITOR: launch auditor, then memory-to-files. Then run-next (one command at a time).
 
-6. **Repeat** from step 2.
+6. **Repeat** from step 1.
 
 ## Rules
 
-- NEVER implement here. ALWAYS delegate to Developer subagent.
-- Pass full task text — do not make subagent read files.
+- **Terminal subagent ONLY** — No parallel terminals.
+- **NO parallelism** — One subagent at a time.

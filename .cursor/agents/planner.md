@@ -34,10 +34,10 @@ Each task must be:
 ## Output
 
 1. **Task files** in `.dreamteam/tasks/task_XXX.md` (format: `.cursor/rules/autonomous-dev-system.mdc`)
-
-2. **Database entries** in `.dreamteam/db/dag.db` (tasks table)
-
+2. **Epic docs** (optional) in `.dreamteam/docs/epics/` for high-level breakdown
 3. **Architecture updates** in `.dreamteam/memory/architecture.md` if new modules are introduced
+
+Orchestrator runs `sync-tasks` after Planner returns — syncs files to DB. Planner creates files only.
 
 ## Rules
 
@@ -52,4 +52,4 @@ Each task must be:
 2. Break down into features, then modules, then tasks
 3. Define dependency edges (task A depends on task B → B must be done first)
 4. Assign priorities
-5. Create task files and insert into database
+5. Create task files in `.dreamteam/tasks/`. Orchestrator runs sync-tasks to populate DB.

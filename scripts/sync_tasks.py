@@ -27,6 +27,7 @@ def main() -> None:
             content = f.read()
         task_data = parse_task_file(content)
         if task_data:
+            task_data["content"] = content
             add_task(task_data)
             count += 1
             print(f"Synced {task_data['id']}")

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dreamteam-db": {
+      "command": "python",
+      "args": ["-m", "dreamteam.mcp_server"],
+      "env": {
+        "DREAMTEAM_PROJECT_CWD": "1"
+      }
+    }
+  }
+}

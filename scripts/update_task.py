@@ -13,6 +13,10 @@ TASKS_DIR = project.get_tasks_dir()
 
 VALID_STATUSES = ("todo", "in_progress", "done", "blocked")
 
+TRIGGER_RESEARCHER = 20
+TRIGGER_META_PLANNER = 50
+TRIGGER_AUDITOR = 200
+
 
 def update_task_file(task_id: str, status: str, owner: str | None = None) -> bool:
     """Update status (and owner) in task markdown file."""
@@ -56,8 +60,23 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
             "UPDATE tasks SET status = ?, updated_at = ? WHERE id = ?",
             (status, now, task_id),
         )
-    conn.commit()
     affected = cursor.rowcount
+    if affected > 0 and status == "done":
+        cursor.execute(
+            "UPDATE metrics SET value = value + 1 WHERE metric = 'tasks_completed'"
+        )
+        cursor.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
+        row = cursor.fetchone()
+        count = row[0] if row else 0
+        if count % TRIGGER_RESEARCHER == 0 and count > 0:
+            print("TRIGGER_RESEARCHER")
+        if count % TRIGGER_META_PLANNER == 0 and count > 0:
+            print("TRIGGER_META_PLANNER")
+        if count % TRIGGER_AUDITOR == 0 and count > 0:
+            print("TRIGGER_AUDITOR")
+        print(f"tasks_completed: {count}")
+
+    conn.commit()
     conn.close()
 
     if affected > 0 and sync_file:

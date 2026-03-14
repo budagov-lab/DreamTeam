@@ -7,6 +7,7 @@ import sys
 
 import project
 DB_PATH = project.get_db_path()
+MEMORY_DIR = project.get_memory_dir()
 
 
 def init_db(reset: bool = False) -> None:
@@ -20,6 +21,7 @@ def init_db(reset: bool = False) -> None:
         cursor.execute("DROP TABLE IF EXISTS metrics")
         cursor.execute("DROP TABLE IF EXISTS context_graph")
         cursor.execute("DROP TABLE IF EXISTS vector_code")
+        cursor.execute("DROP TABLE IF EXISTS memory")
         conn.commit()
 
     cursor.execute("""
@@ -30,10 +32,15 @@ def init_db(reset: bool = False) -> None:
             priority INTEGER,
             dependencies TEXT,
             owner TEXT,
+            content TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    try:
+        cursor.execute("ALTER TABLE tasks ADD COLUMN content TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS metrics (
             metric TEXT PRIMARY KEY,
@@ -56,10 +63,32 @@ def init_db(reset: bool = False) -> None:
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS memory (
+            key TEXT PRIMARY KEY,
+            content TEXT,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
     cursor.execute(
         "INSERT OR IGNORE INTO metrics (metric, value) VALUES ('tasks_completed', 0)"
     )
+
+    # Migration: copy memory from files to DB if memory table is empty
+    cursor.execute("SELECT COUNT(*) FROM memory")
+    if cursor.fetchone()[0] == 0 and os.path.isdir(MEMORY_DIR):
+        for key in ("summaries", "architecture"):
+            path = os.path.join(MEMORY_DIR, f"{key}.md")
+            if os.path.exists(path):
+                with open(path, encoding="utf-8") as f:
+                    content = f.read()
+                cursor.execute(
+                    "INSERT INTO memory (key, content, updated_at) VALUES (?, ?, datetime('now'))",
+                    (key, content),
+                )
+                print(f"Migrated {key}.md to DB.")
+
     conn.commit()
     conn.close()
     print("Database initialized successfully.")

@@ -14,8 +14,9 @@ description: Reviews code for quality, correctness, and adherence to architectur
 ## Workflow
 
 1. **Read:** Changed files, task requirements
-2. **Check:** Correctness, tests, architecture compliance
-3. **Report:** Issues with severity (Critical, Suggestion, Nice-to-have)
+2. **Verify:** Dispatch Terminal subagent → run `pytest` (or project test command). If tests fail → Critical.
+3. **Check:** Correctness, architecture compliance
+4. **Report:** Issues with severity (Critical, Suggestion, Nice-to-have)
 
 ## Checklist
 

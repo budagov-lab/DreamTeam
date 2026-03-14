@@ -56,7 +56,20 @@ def main() -> None:
             print("FAIL: sync-tasks failed. Run: python -m dreamteam init-db", file=sys.stderr)
             sys.exit(1)
 
-    # 2. Get next task
+    # 2. Verify tasks have content in DB; if missing, sync
+    r = run([sys.executable, os.path.join(SCRIPTS_DIR, "verify_sync.py")], check=False)
+    if r.returncode != 0:
+        print("Syncing task content to DB...", file=sys.stderr)
+        r2 = run([sys.executable, os.path.join(SCRIPTS_DIR, "sync_tasks.py")], check=False)
+        if r2.returncode != 0:
+            print("FAIL: sync-tasks failed.", file=sys.stderr)
+            sys.exit(1)
+        r = run([sys.executable, os.path.join(SCRIPTS_DIR, "verify_sync.py")], check=False)
+        if r.returncode != 0:
+            print("FAIL: Tasks still missing content. Run: python -m dreamteam sync-tasks", file=sys.stderr)
+            sys.exit(1)
+
+    # 3. Get next task
     r = run([sys.executable, os.path.join(SCRIPTS_DIR, "scheduler.py")])
     task_id = (r.stdout or "").strip()
 
@@ -64,25 +77,41 @@ def main() -> None:
         print("All tasks complete.")
         return
 
-    # 3. Set in progress
+    # 4. Set in progress
     run([sys.executable, os.path.join(SCRIPTS_DIR, "update_task.py"), task_id, "in_progress"])
 
-    # 4. Print instructions
+    # 5. Get progress (completed, total)
+    completed = 0
+    total = 0
+    try:
+        import sqlite3
+        db_path = project.get_db_path()
+        if os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
+            row = cur.fetchone()
+            completed = row[0] if row else 0
+            cur.execute("SELECT COUNT(*) FROM tasks")
+            total = cur.fetchone()[0]
+            conn.close()
+    except Exception:
+        pass
+
+    # 6. Print instructions
     print("=" * 60)
-    print(f"NEXT TASK: {task_id}")
+    print(f"NEXT TASK: {task_id}  ({completed + 1} of {total})")
     print("=" * 60)
     print()
-    print("1. Execute this task (use Composer with .cursor/agents/developer.md)")
-    print("2. After Reviewer approval: git commit & push:")
-    print(f"   python -m dreamteam git-commit {task_id} \"<short title>\"")
-    print("3. Then run:")
+    print("1. Orchestrator: Dispatch Developer with task ID. Developer uses MCP dreamteam_get_task or Terminal get-task " + task_id)
+    print("2. After Reviewer approval: Launch Git-Ops subagent (task ID + short title). Git-Ops does commit.")
+    print("3. Then run (update-task done auto-increments counter and emits TRIGGER_*):")
     print()
     print(f"   python -m dreamteam update-task {task_id} done")
-    print("   python -m dreamteam task-counter")
     print("   python -m dreamteam run-next")
     print()
-    print("3. If task_counter prints TRIGGER_RESEARCHER:")
-    print("   python -m dreamteam task-counter -> Researcher agent -> python -m dreamteam check-memory -> vector-index")
+    print("4. If update-task prints TRIGGER_RESEARCHER:")
+    print("   Researcher agent -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
     print()
     print("5. For new session (every ~20-50 tasks): python -m dreamteam verify-tasks first")
     print("=" * 60)

@@ -1,5 +1,7 @@
 # Git Worktrees for Parallel Agents
 
+**Note:** DreamTeam defaults to **sequential execution** (no parallelism). Use worktrees only if you explicitly enable parallel workflows.
+
 For parallel Composer agents, use **git worktrees** to isolate each agent's work.
 
 ## Setup

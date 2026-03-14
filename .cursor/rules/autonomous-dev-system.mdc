@@ -10,8 +10,8 @@ alwaysApply: true
 When user invokes `/start` or `/run`:
 - **NEVER** write code, create tasks, or implement in this chat.
 - **ALWAYS** delegate to subagents (Task tool, `/planner`, `/developer`).
-- **YOU** run `python -m dreamteam` commands (sync-tasks, run-next, update-task, task-counter).
-- Pass full context to subagents — they must not re-read files.
+- **Terminal subagent** — Orchestrator dispatches Terminal for run-next, sync-tasks, update-task only. Orchestrator does NOT do commits.
+- **Developer manages Terminal** for get-task, pytest, and implementation commands. Pass task ID to Developer, not task content.
 
 ## Task Execution
 
@@ -53,10 +53,22 @@ Valid statuses: `todo`, `in_progress`, `done`, `blocked`.
 - Every 50 tasks: Meta Planner runs (DAG optimization).
 - Every 200 tasks: Auditor runs (architecture audit).
 
+## Parallelism (FORBIDDEN)
+
+- **NO parallel tasks** — One task at a time. Wait for Developer to finish before next task.
+- **NO parallel subagents** — One subagent at a time. Do NOT launch Planner + Developer, or multiple Developers, in parallel.
+- **NO parallel terminals** — One terminal command at a time. Wait for completion before next command.
+- Strictly sequential: Planner → Developer → Reviewer → Git-Ops (commit) → Orchestrator: update-task, run-next.
+
+## Terminal
+
+- **Terminal subagent** — Developer: get-task, pytest. Reviewer: get-task, pytest. Git-Ops: git-commit. Researcher, Meta Planner, Auditor: memory-get, dag-state (DB only). Orchestrator: run-next, sync-tasks, update-task, memory-to-files.
+- One command at a time. No parallel terminals.
+
 ## Commands
 
 Use `python -m dreamteam` (works without PATH):
-- python -m dreamteam run-next, update-task, task-counter
+- python -m dreamteam run-next, update-task (done auto-increments), git-commit
 - python -m dreamteam verify-tasks, sync-tasks, recover
 
 ## Console & UI

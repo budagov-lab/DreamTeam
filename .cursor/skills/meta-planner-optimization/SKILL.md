@@ -13,10 +13,11 @@ description: Analyzes technical debt, optimizes DAG, resplits tasks. Use when TR
 
 ## Workflow
 
-1. **Analyze:** Review DAG, task distribution, tech debt
-2. **Identify:** Bottlenecks, oversized tasks, missing tasks
-3. **Optimize:** Resplit tasks, add refactor tasks, adjust priorities
-4. **Output:** New tasks, refactor tasks, architecture change suggestions
+1. **Read from DB:** Terminal → `dag-state`, `memory-get summaries`, `memory-get architecture`
+2. **Analyze:** Review DAG, task distribution, tech debt
+3. **Identify:** Bottlenecks, oversized tasks, missing tasks
+4. **Optimize:** Resplit tasks, add refactor tasks, adjust priorities
+5. **Output:** New task files in .dreamteam/tasks/, architecture recommendations for Researcher
 
 ## Output
 

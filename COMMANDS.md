@@ -33,16 +33,31 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 | `dreamteam update-task <id> <status>` | Update status (todo, in_progress, done, blocked) |
 | `dreamteam verify-tasks` | Check DB ↔ files consistency |
 | `dreamteam sync-tasks` | Sync .dreamteam/tasks/ to DB |
+| `dreamteam verify-sync` | Verify tasks have content in DB |
 | `dreamteam git-commit <id> <msg>` | Add, commit, push for task (after Reviewer) |
+| `dreamteam get-task <id>` | Get task content from DB (Developer loads fresh) |
 
 ## Task Counter & Triggers
 
 | Command | Description |
 |---------|-------------|
-| `dreamteam task-counter` | Increment completed count, check triggers |
-| `dreamteam task-counter --status` | Show count without incrementing |
+| `dreamteam task-counter` | Show tasks_completed / total, next TRIGGER_* |
 
 **Triggers:** TRIGGER_RESEARCHER (20), TRIGGER_META_PLANNER (50), TRIGGER_AUDITOR (200)
+
+## Memory (DB — Researcher/Auditor use only)
+
+| Command | Description |
+|---------|-------------|
+| `dreamteam memory-get <summaries\|architecture>` | Get memory content from DB |
+| `dreamteam memory-set <key> [file]` | Set memory in DB (stdin or file path) |
+| `dreamteam memory-to-files` | Sync memory from DB to .dreamteam/memory/*.md |
+| `dreamteam recent-tasks [N]` | List last N done tasks from DB |
+| `dreamteam dag-state` | DAG state for Meta Planner (tasks, metrics from DB) |
+
+**MCP dreamteam-db** — Use tools dreamteam_get_task, dreamteam_get_memory, dreamteam_set_memory, dreamteam_get_dag_state, dreamteam_recent_tasks instead of Terminal when available. See docs/MCP_DB_BRIDGE.md.
+
+**Researcher, Meta Planner, Auditor** read/write memory via MCP or Terminal. Orchestrator runs `memory-to-files` after Researcher.
 
 ## Resilience
 
@@ -64,25 +79,28 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 
 ```powershell
 # 1. Deploy (first time)
-dreamteam new-project .
+python -m dreamteam new-project .
 
 # 2. Add goal via /start in Cursor, or create tasks manually
 
 # 3. Sync and run
-dreamteam sync-tasks
-dreamteam run-next
+python -m dreamteam sync-tasks
+python -m dreamteam run-next
 
-# 4. Execute task (Composer + @developer)
+# 4. Execute task (Composer + @developer), then Reviewer (code-reviewer)
 
-# 5. When done:
-dreamteam update-task T001 done
-dreamteam task-counter
-dreamteam run-next
+# 5. After Reviewer approval: Launch Git-Ops subagent (task ID + short title). Git-Ops does commit.
 
-# 6. If stuck: dreamteam recover
-# 7. If TRIGGER_RESEARCHER: Researcher agent → dreamteam check-memory → dreamteam vector-index
+# 6. Then (update-task done auto-increments counter, emits TRIGGER_*):
+python -m dreamteam update-task T001 done
+python -m dreamteam run-next
+
+# 7. If stuck: python -m dreamteam recover
+# 8. If TRIGGER_RESEARCHER: Researcher agent -> vector-index -> check-memory
 ```
 
-## Parallel Agents (Git Worktrees)
+## Parallelism
 
-See `docs/GIT_WORKTREES.md`.
+**Default: sequential.** One task, one subagent at a time. No parallel terminals.
+
+For advanced parallel workflows (git worktrees), see `docs/GIT_WORKTREES.md`.

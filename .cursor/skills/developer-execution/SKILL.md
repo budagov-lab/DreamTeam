@@ -13,28 +13,27 @@ description: Executes micro-tasks: writes code, runs tests, fixes errors, update
 
 ## Workflow
 
-1. **Get task:** Read task file from `.dreamteam/tasks/task_XXX.md`
+1. **Get task:** Dispatch Terminal subagent → `python -m dreamteam get-task [id]` → read task content
 2. **Verify dependencies:** All dependencies must be `done`
-3. **Set status:** Update to `in_progress` in file and database
-4. **Implement:** Write code per task requirements
-5. **Test:** Run tests, fix failures
-6. **Complete:** Set status to `done`, update database
-7. **Run task counter:** `dreamteam task-counter`
+3. **Implement:** Write code per task requirements (task is in_progress from run-next)
+4. **Test:** Dispatch Terminal subagent → run `pytest`, fix failures
+5. **Return:** Deliver code. Do NOT mark done — Orchestrator does that after Reviewer + Git-Ops.
 
 ## Input
 
-- Task ID (e.g. T001)
-- Task file content
+- Task ID (e.g. T001) from Orchestrator
+- Architecture excerpt
 
 ## Output
 
 - Code changes
 - Test updates
-- Task status: `done`
-- Database updated
+- Task remains in_progress until Orchestrator runs update-task done
 
 ## Rules
 
+- **NO parallelism** — One task only.
+- **Terminal subagent** — Developer dispatches Terminal (mcp_task, shell) for get-task, pytest, build. One command at a time.
 - Check `.dreamteam/memory/architecture.md` for module ownership
 - Run tests before marking done
 - Update both task file and database

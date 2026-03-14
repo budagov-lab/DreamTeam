@@ -8,7 +8,9 @@ version = "0.1.0"
 description = "Autonomous Development System — 500-1000 tasks without quality degradation"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "mcp>=1.0.0",
+]
 
 [project.optional-dependencies]
 vector = ["sentence-transformers>=2.2.0", "numpy>=1.24.0"]

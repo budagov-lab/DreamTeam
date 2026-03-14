@@ -52,24 +52,35 @@ def parse_task_file(content: str) -> dict | None:
     return result
 
 
+def _ensure_content_column(cursor: sqlite3.Cursor) -> None:
+    """Add content column if missing (migration)."""
+    cursor.execute("PRAGMA table_info(tasks)")
+    if not any(col[1] == "content" for col in cursor.fetchall()):
+        cursor.execute("ALTER TABLE tasks ADD COLUMN content TEXT")
+
+
 def add_task(task_data: dict, upsert: bool = True) -> bool:
     """Insert or update task in database."""
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
+    content = task_data.get("content", "")
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    _ensure_content_column(cursor)
+
     if upsert:
         cursor.execute(
             """
-            INSERT INTO tasks (id, title, status, priority, dependencies, owner, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tasks (id, title, status, priority, dependencies, owner, content, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 title = excluded.title,
                 status = excluded.status,
                 priority = excluded.priority,
                 dependencies = excluded.dependencies,
                 owner = excluded.owner,
+                content = excluded.content,
                 updated_at = excluded.updated_at
             """,
             (
@@ -79,6 +90,7 @@ def add_task(task_data: dict, upsert: bool = True) -> bool:
                 task_data["priority"],
                 task_data["dependencies"],
                 task_data.get("owner", ""),
+                content,
                 now,
                 now,
             ),
@@ -86,8 +98,8 @@ def add_task(task_data: dict, upsert: bool = True) -> bool:
     else:
         cursor.execute(
             """
-            INSERT OR IGNORE INTO tasks (id, title, status, priority, dependencies, owner, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO tasks (id, title, status, priority, dependencies, owner, content, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 task_data["id"],
@@ -96,6 +108,7 @@ def add_task(task_data: dict, upsert: bool = True) -> bool:
                 task_data["priority"],
                 task_data["dependencies"],
                 task_data.get("owner", ""),
+                content,
                 now,
                 now,
             ),
@@ -131,7 +144,7 @@ def main() -> None:
     if not task_data:
         print("Could not parse task (missing id)", file=sys.stderr)
         sys.exit(1)
-
+    task_data["content"] = content
     add_task(task_data)
     print(f"Task {task_data['id']} added/updated.")
 

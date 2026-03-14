@@ -54,7 +54,7 @@ def create_project(path: str) -> str:
 
     data_root = os.path.join(root, ".dreamteam")
     os.makedirs(data_root, exist_ok=True)
-    dirs = ["db", "memory", "tasks", "docs", "docs/epics"]
+    dirs = ["db", "memory", "tasks", "docs", "docs/epics", "temp"]
     for d in dirs:
         os.makedirs(os.path.join(data_root, d), exist_ok=True)
 
@@ -86,7 +86,7 @@ def create_project(path: str) -> str:
     import sqlite3
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    for t in ("tasks", "metrics", "context_graph", "vector_code"):
+    for t in ("tasks", "metrics", "context_graph", "vector_code", "memory"):
         c.execute(f"DROP TABLE IF EXISTS {t}")
     conn.commit()
     c.execute("""CREATE TABLE IF NOT EXISTS tasks (
@@ -96,7 +96,15 @@ def create_project(path: str) -> str:
     c.execute("CREATE TABLE IF NOT EXISTS metrics (metric TEXT PRIMARY KEY, value INTEGER)")
     c.execute("CREATE TABLE IF NOT EXISTS context_graph (module TEXT, functions TEXT, dependencies TEXT, embedding BLOB)")
     c.execute("CREATE TABLE IF NOT EXISTS vector_code (path TEXT, chunk TEXT, embedding BLOB, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)")
+    c.execute("""CREATE TABLE IF NOT EXISTS memory (
+        key TEXT PRIMARY KEY, content TEXT, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)""")
     c.execute("INSERT OR IGNORE INTO metrics (metric, value) VALUES ('tasks_completed', 0)")
+    # Seed memory from created files
+    for key, path in [("architecture", arch), ("summaries", summaries)]:
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                content = f.read()
+            c.execute("INSERT OR REPLACE INTO memory (key, content, updated_at) VALUES (?, ?, datetime('now'))", (key, content))
     conn.commit()
     conn.close()
 
