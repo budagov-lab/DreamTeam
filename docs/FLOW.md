@@ -18,7 +18,7 @@ User /start + goal
        │
        ▼
 ┌──────────────┐
-│   run-next   │  verify → [sync if needed] → scheduler → get task ID → set in_progress
+│   run-next   │  verify → [sync if needed] → integrity fix → scheduler → get task ID → set in_progress
 └──────┬───────┘
        │
        ▼

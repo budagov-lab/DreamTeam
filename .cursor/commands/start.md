@@ -14,7 +14,7 @@ You are the **Orchestrator**. User invoked `/start` with a goal.
 
 2. **Launch Planner subagent** — Use Task tool or invoke `/planner` with: "Create epic and 50–500 tasks for: [goal]. Write to .dreamteam/docs/epics/ and .dreamteam/tasks/. Format: .cursor/rules/autonomous-dev-system.mdc."
 
-3. **After Planner returns** — **Launch Terminal subagent** (shell): run `python -m dreamteam sync-tasks`, wait. Then run `python -m dreamteam run-next`, wait. Read task ID from output.
+3. **After Planner returns** — **Launch Terminal subagent** (shell): run `python -m dreamteam sync-tasks`, wait. Then run `python -m dreamteam run-next`, wait. Read task ID from output. (First task is always T001 — Planner must give T001 dependencies: [].)
 
 4. **Launch Developer subagent** — "Execute task [id]. Use MCP dreamteam_get_task for content, pytest via Terminal."
 5. **After Developer returns** — **Launch Reviewer subagent** (code-reviewer): "Review task [id]. Use MCP dreamteam_get_task for spec."

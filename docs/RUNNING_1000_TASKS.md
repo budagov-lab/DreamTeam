@@ -17,7 +17,7 @@ Repeat. Each `run-next` prints the exact commands for the next round.
 Context grows. To avoid limits:
 
 1. Start a **new chat session**
-2. Run: `dreamteam verify-tasks`
+2. Run: `dreamteam verify-tasks` ; `dreamteam verify-integrity`
 3. Say: **"Continue"** or **"Execute next task"**
 4. Orchestrator resumes from scheduler
 
@@ -29,6 +29,7 @@ Context grows. To avoid limits:
 | Task stuck in_progress (subagent crashed) | `dreamteam recover --reset T001` |
 | Multiple stuck tasks | `dreamteam recover` (resets all >60min) |
 | summaries.md too large | Run Researcher, then `dreamteam check-memory` |
+| tasks_completed drift / gaps | `dreamteam verify-integrity` ; `dreamteam recover` |
 | General recovery | `dreamteam recover` |
 
 ## Triggers (automatic)

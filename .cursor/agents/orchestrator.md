@@ -82,7 +82,7 @@ When starting a new session or resuming after a break:
 - **NO parallelism:** One task, one subagent at a time. Never launch Developer + Planner, or multiple Developers, in parallel.
 - One Developer subagent per task (no parallel implementation on same codebase)
 - Reviewer runs after Developer, not before
-- On TRIGGER_* output from task_counter, dispatch corresponding agent
+- On TRIGGER_* output from update-task done (or task-counter), dispatch corresponding agent
 - Developer, Reviewer, Git-Ops run Terminal for their scope. Researcher, Meta Planner, Auditor run Terminal for memory-get, dag-state (DB only). Orchestrator runs Terminal for run-next, sync-tasks, update-task, memory-to-files.
 - **Session-agnostic:** Orchestrator works across sessions; state lives in db and memory
 - **Terminal subagent** — Only Terminal runs terminal. One command at a time. Close when done.

@@ -14,6 +14,7 @@ SCRIPT_MAP = {
     "scheduler": "scheduler.py",
     "sync-tasks": "sync_tasks.py",
     "verify-tasks": "verify_tasks.py",
+    "verify-integrity": "verify_integrity.py",
     "recover": "recover.py",
     "update-task": "update_task.py",
     "task-counter": "task_counter.py",
@@ -101,6 +102,7 @@ def main() -> None:
         print("  scheduler            Get next task ID")
         print("  sync-tasks           Sync tasks from files to DB")
         print("  verify-tasks         Verify DB/file consistency")
+        print("  verify-integrity     Verify tasks_completed, gaps, orphan deps")
         print("  recover              Recovery: sync, reset stuck, verify")
         print("  update-task <id> <status>  Update task status")
         print("  task-counter         Show progress (tasks_completed / total)")

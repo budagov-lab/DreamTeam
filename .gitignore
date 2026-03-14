@@ -37,6 +37,11 @@ env/
 # Integration test (system E2E)
 integration-test/
 
+# Internal docs (not for public)
+docs/AUDIT_*.md
+docs/GITHUB_PUBLISH.md
+docs/epics/
+
 # OS
 .DS_Store
 Thumbs.db

@@ -69,7 +69,29 @@ def main() -> None:
             print("FAIL: Tasks still missing content. Run: python -m dreamteam sync-tasks", file=sys.stderr)
             sys.exit(1)
 
-    # 3. Get next task
+    # 3. Quick integrity fix: tasks_completed must match actual done count
+    try:
+        import sqlite3
+        db_path = project.get_db_path()
+        if os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
+            m = cur.fetchone()
+            cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'done'")
+            actual = cur.fetchone()[0]
+            if m is not None and m[0] != actual:
+                cur.execute(
+                    "INSERT INTO metrics (metric, value) VALUES ('tasks_completed', ?) ON CONFLICT(metric) DO UPDATE SET value = excluded.value",
+                    (actual,),
+                )
+                conn.commit()
+                print("Fixed tasks_completed drift.", file=sys.stderr)
+            conn.close()
+    except Exception:
+        pass
+
+    # 4. Get next task
     r = run([sys.executable, os.path.join(SCRIPTS_DIR, "scheduler.py")])
     task_id = (r.stdout or "").strip()
 
@@ -94,10 +116,10 @@ def main() -> None:
             print("  Hint: No tasks. Run from project folder or set DREAMTEAM_PROJECT=<path>")
         return
 
-    # 4. Set in progress
+    # 5. Set in progress
     run([sys.executable, os.path.join(SCRIPTS_DIR, "update_task.py"), task_id, "in_progress"])
 
-    # 5. Get progress (completed, total)
+    # 6. Get progress (completed, total)
     completed = 0
     total = 0
     try:
@@ -115,7 +137,7 @@ def main() -> None:
     except Exception:
         pass
 
-    # 6. Print instructions
+    # 7. Print instructions
     print("=" * 60)
     print(f"NEXT TASK: {task_id}  ({completed + 1} of {total})")
     print("=" * 60)
@@ -130,7 +152,7 @@ def main() -> None:
     print("4. If update-task prints TRIGGER_RESEARCHER:")
     print("   Researcher agent -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
     print()
-    print("5. For new session (every ~20-50 tasks): python -m dreamteam verify-tasks first")
+    print("5. For new session (every ~20-50 tasks): python -m dreamteam verify-tasks ; python -m dreamteam verify-integrity")
     print("=" * 60)
 
 

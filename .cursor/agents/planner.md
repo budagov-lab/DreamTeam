@@ -41,6 +41,7 @@ Orchestrator runs `sync-tasks` after Planner returns — syncs files to DB. Plan
 
 ## Rules
 
+- **T001 must have dependencies: []** — First task. Scheduler returns first todo with deps satisfied; T001 starts the flow.
 - No circular dependencies in the DAG
 - Dependencies must reference existing task IDs
 - Higher priority number = higher urgency

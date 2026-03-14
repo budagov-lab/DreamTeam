@@ -32,6 +32,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 | `dreamteam scheduler --ready` | List ready tasks |
 | `dreamteam update-task <id> <status>` | Update status (todo, in_progress, done, blocked) |
 | `dreamteam verify-tasks` | Check DB ↔ files consistency |
+| `dreamteam verify-integrity` | Check tasks_completed, gaps, orphan deps |
 | `dreamteam sync-tasks` | Sync .dreamteam/tasks/ to DB |
 | `dreamteam verify-sync` | Verify tasks have content in DB |
 | `dreamteam git-commit <id> <msg>` | Add, commit, push for task (after Reviewer) |
@@ -63,7 +64,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 
 | Command | Description |
 |---------|-------------|
-| `dreamteam recover` | Sync, reset stuck in_progress (>60min), verify |
+| `dreamteam recover` | Sync, fix tasks_completed drift, reset stuck (>60min), verify, integrity |
 | `dreamteam recover --reset T001` | Reset specific task to todo |
 | `dreamteam check-memory` | Validate summaries.md, architecture.md line limits |
 
