@@ -55,6 +55,22 @@ The task queue is not fixed. FixPlanner owns it and can reorder, deprecate, or c
 
 ---
 
+### RAG & Context — No Token Overflow
+
+The Orchestrator runs in the main chat. Without control, context would explode over hundreds of tasks. The system solves this with **RAG + context minimization**:
+
+| Mechanism | Purpose |
+|-----------|---------|
+| **Memory in DB** | `summaries`, `architecture`, `goal` live in SQLite. Researcher writes via `memory-set`; Orchestrator syncs to files with `memory-to-files`. Subagents read from DB or files. |
+| **Vector search (Qdrant)** | `pip install dreamteam[vector]` — semantic search over codebase. Researcher uses it for 100+ task projects. Local storage or `QDRANT_URL` server. |
+| **Compression** | Researcher replaces, not appends. Summaries stay ~150 lines. Context never explodes. |
+| **Orchestrator: never read files** | Pass task ID only. "Execute task T001." Developer fetches content via MCP `dreamteam_get_task`. No architecture excerpts, no pasting. |
+| **State in .dreamteam/** | All context lives in DB and files. Session-agnostic: Orchestrator can resume after a break. Terminal output + task ID is enough. |
+
+**Effect:** Orchestrator stays lean. Subagents pull what they need. Over 1000 tasks, context stays bounded — no overflow.
+
+---
+
 ## Pipeline Overview
 
 ```
