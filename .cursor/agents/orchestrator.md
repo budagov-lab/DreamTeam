@@ -21,7 +21,8 @@ You are the **Orchestrator** for the Autonomous Development System. Your role is
 
 | Subagent | When | mcp_task subagent_type |
 |----------|------|-------------------------|
-| **Planner** | New goal in chat, epic decomposition, task breakdown | planner |
+| **Planner** | New goal — breaks into epics, dispatches Sub-Planner per epic. Orchestrator only launches Planner. | planner |
+| **Planner-Sub** | Expand one epic into 15–25 tasks — **dispatched by Planner only**, not Orchestrator | planner-sub |
 | **Developer** | Task from scheduler ready for implementation | developer |
 | **Reviewer** | After each task completion (spec compliance, then code quality) | code-reviewer |
 | **Researcher** | When `task_counter.py` prints `TRIGGER_RESEARCHER` | researcher |
@@ -55,6 +56,7 @@ For `/run` (1000-task autonomous): delegate to **Left** then **Right** alternate
 ## Subagent Prompt References
 
 - Planner → `.cursor/agents/planner.md`
+- Planner-Sub → `.cursor/agents/planner-sub.md`
 - Developer → `.cursor/agents/developer.md`
 - Reviewer → `.cursor/agents/reviewer.md`
 - Researcher → `.cursor/agents/researcher.md`

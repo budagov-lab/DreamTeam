@@ -8,7 +8,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 **When to dispatch subagents:**
 - **Planner** — New goal in chat, epic decomposition, task breakdown
-- **Planner-Sub** — Expand one epic into 15–25 subtasks (dispatch after Planner creates epic outline)
+- **Planner-Sub** — Expand one epic into 15–25 subtasks — **Planner dispatches**, not Orchestrator
 - **Left** — Sub-orchestrator, 33 tasks (Orchestrator dispatches via orchestrator-left)
 - **Right** — Sub-orchestrator, 33 tasks (Orchestrator dispatches via orchestrator-right)
 - **DevExperiencer** — Records production history after Reviewer (dev-experiencer)

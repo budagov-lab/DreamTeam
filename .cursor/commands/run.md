@@ -9,9 +9,9 @@ You delegate to **Left** and **Right** (two Sub-orchestrators). One Orchestrator
 1. **First:** Terminal → `python -m dreamteam verify-tasks` (exit 1 = sync-tasks)
 2. **Goal:** If user provided goal with /run, Terminal → `python -m dreamteam set-goal "goal"` to store it. If no goal — use "Continue execution" (tasks exist, run-next). Never ask user for goal.
 3. **Dispatch Left** — mcp_task, subagent_type: **orchestrator-left**, prompt: "Goal: [goal]. Run 33 tasks (planning or execution). Return BATCH_DONE or ALL_COMPLETE."
-3. **When Left returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Right** (subagent_type: **orchestrator-right**).
-4. **When Right returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Left** (subagent_type: **orchestrator-left**).
-5. **Alternate** Left ↔ Right until ALL_COMPLETE.
+4. **When Left returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Right** (subagent_type: **orchestrator-right**).
+5. **When Right returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Left** (subagent_type: **orchestrator-left**).
+6. **Alternate** Left ↔ Right until ALL_COMPLETE.
 
 ## On Failure (Left/Right crashed / timeout)
 

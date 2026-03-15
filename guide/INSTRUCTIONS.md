@@ -39,7 +39,7 @@ The Autonomous Development System enables **500–1000+ sequential tasks** witho
 | Agent | Trigger | Responsibility |
 |-------|---------|----------------|
 | **Planner** | On new goal | Decompose goals, design architecture, generate DAG |
-| **Planner-Sub** | After epic outline | Expand one epic into 15–25 subtasks |
+| **Planner-Sub** | Dispatched by Planner per epic | Expand one epic into 15–25 subtasks |
 | **Developer** | Scheduler assigns | Write code, run tests, fix errors, update task status |
 | **Reviewer** | After each task | Review code quality, suggest fixes |
 | **DevExperiencer** | After each Reviewer | Record task experience to DevExperience DB (for Learning loop) |

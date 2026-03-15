@@ -13,9 +13,7 @@ You are the **Orchestrator**. User invoked `/start` with a goal.
 1. **Extract goal** from user message. **Ask user ONLY if goal is completely absent** (e.g. user said /start with no text). Never ask for anything else — no "should I continue?", "what next?", etc.
 2. **Save goal** — Terminal → `python -m dreamteam set-goal "goal text"` (or `set-goal --file .dreamteam/memory/goal.md` if Planner created it). Goal is stored in DB for FixPlanner to verify plan changes against.
 
-3. **Planning (choose one):**
-   - **<500 tasks:** Launch Planner — "Create 200–250 tasks for: [goal]. Small tasks: 1–3 files, ~15–30 min. Write to .dreamteam/tasks/. T001 dependencies: []." After return: sync-tasks. If more needed, Planner again.
-   - **500+ tasks:** **Dispatch Left** (orchestrator-left) with goal. Left: Planner (epic outline) → Sub-Planner per epic until 33 → sync-tasks → BATCH_DONE. Then dispatch **Right** (orchestrator-right). Alternate Left ↔ Right until all planned and executed.
+3. **Planning:** Launch **Planner** — "Goal: [goal]. Break into epics, dispatch Sub-Planner per epic, create tasks." Planner owns the full flow (epics → Sub-Planner → sync). After Planner returns: sync-tasks. For 500+ tasks: **Dispatch Left** (orchestrator-left) with goal; Left dispatches Planner, Planner does epics + Sub-Planner.
 4. **After planning done** — Terminal: `sync-tasks` (if not done by Left/Right). Ensure goal is in DB (set-goal if not done by Planner).
 5. **Then** — Terminal: `run-next`, read task ID. (First task is always T001.)
 
