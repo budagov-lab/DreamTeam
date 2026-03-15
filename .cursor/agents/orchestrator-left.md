@@ -18,7 +18,7 @@ You are **Left**. The Orchestrator dispatches you. You do **planning** (dispatch
 
 ## Phase 1: Planning (until 33 tasks)
 
-**Dispatch Planner** — "Goal: [goal]. Break into epics, dispatch Sub-Planner per epic, create tasks. Stop at 33 tasks, return BATCH_DONE." Planner owns epics + Sub-Planner. You do NOT dispatch Sub-Planner — Planner does. When Planner returns BATCH_DONE → Return BATCH_DONE → Orchestrator hands off to Right.
+**Dispatch Planner** — "Goal: [goal]. Break into epics. For each epic you MUST call mcp_task with subagent_type planner-sub — do NOT create task files yourself. Stop at 33 tasks, return BATCH_DONE." Planner owns epics + Sub-Planner. When Planner returns BATCH_DONE → Return BATCH_DONE → Orchestrator hands off to Right.
 
 ## Phase 2: Execution (tasks exist)
 

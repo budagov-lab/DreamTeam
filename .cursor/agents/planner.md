@@ -17,10 +17,16 @@ You are the **Planner** agent. Your role: break any goal into **epics/blocks**, 
 
 1. **Read goal** and current architecture (`.dreamteam/memory/architecture.md`)
 2. **Break into epics** — 5–50 blocks. Each epic = coherent chunk (feature, module, phase). Write `.dreamteam/docs/epics/[goal-slug].md` with sections: epic title + 5–10 line description each. If epic outline already exists (continue mode) — read it, skip creation.
-3. **For each epic** — dispatch **Sub-Planner** via `mcp_task` (subagent_type: **planner-sub**):
-   - "Expand epic N: [title + desc]. Create TXXX–TYYY. Dependencies: [Tprev]." (First epic: deps [].)
+3. **For each epic — YOU MUST call mcp_task.** Do NOT create task files yourself.
+   - Tool: `mcp_task`
+   - `subagent_type`: `planner-sub`
+   - `prompt`: "Expand epic N: [title]. [5–10 line description]. Create TXXX–TYYY. Dependencies: [Tprev]." (First epic: deps [].)
    - After Sub-Planner returns → dispatch **Terminal** (shell): `python -m dreamteam sync-tasks`
-4. **Return** when all epics expanded, or when "Stop at 33 tasks" and limit reached (BATCH_DONE for Left/Right). Sub-Planner prompt: `.cursor/agents/planner-sub.md`
+4. **Return** when all epics expanded, or when "Stop at 33 tasks" and limit reached (BATCH_DONE for Left/Right).
+
+## DO NOT
+
+- **Do NOT create task_XXX.md files** — Sub-Planner does that. You only create epic outline and call mcp_task.
 
 ## Task Rules (Sub-Planner follows these)
 

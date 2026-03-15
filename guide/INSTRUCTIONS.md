@@ -38,7 +38,7 @@ The Autonomous Development System enables **500–1000+ sequential tasks** witho
 
 | Agent | Trigger | Responsibility |
 |-------|---------|----------------|
-| **Planner** | On new goal | Decompose goals, design architecture, generate DAG |
+| **Planner** | On new goal | Break into epics, dispatch Sub-Planner per epic, create task DAG |
 | **Planner-Sub** | Dispatched by Planner per epic | Expand one epic into 15–25 subtasks |
 | **Developer** | Scheduler assigns | Write code, run tests, fix errors, update task status |
 | **Reviewer** | After each task | Review code quality, suggest fixes |
@@ -58,6 +58,7 @@ The Autonomous Development System enables **500–1000+ sequential tasks** witho
 2. **in_progress** — Assigned to an agent
 3. **done** — Completed and verified
 4. **blocked** — Waiting on dependencies
+5. **deprecated** — Removed from plan (file deleted → sync-tasks sets deprecated)
 
 ---
 

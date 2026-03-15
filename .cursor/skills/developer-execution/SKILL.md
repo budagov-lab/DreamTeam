@@ -28,12 +28,12 @@ description: Executes micro-tasks: writes code, runs tests, fixes errors, update
 
 - Code changes
 - Test updates
-- Task remains in_progress until Orchestrator runs update-task done
+- Task remains in_progress until Orchestrator runs update-task done (after Git-Ops)
 
 ## Rules
 
 - **NO parallelism** — One task only.
 - **Terminal subagent** — Developer dispatches Terminal (mcp_task, shell) for get-task, pytest, build. One command at a time.
 - Check `.dreamteam/memory/architecture.md` for module ownership
-- Run tests before marking done
-- Update both task file and database
+- Run tests before returning
+- **Do NOT run update-task** — Orchestrator runs it after Reviewer and Git-Ops

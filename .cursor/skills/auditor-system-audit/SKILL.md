@@ -13,10 +13,12 @@ description: Audits architecture, finds duplicates, analyzes dependencies. Use w
 
 ## Workflow
 
-1. **Scan codebase:** Modules, functions, dependencies
-2. **Check:** Duplicate functions, circular dependencies, layer violations
-3. **Report:** List issues with severity
-4. **Create tasks:** Refactor tasks for each critical issue
+1. **Read from DB:** Terminal → `memory-get architecture`, `scheduler --list` (or MCP dreamteam_*)
+2. **Scan codebase:** Modules, functions, dependencies (read source files)
+3. **Check:** Duplicate functions, circular dependencies, layer violations
+4. **Report:** List issues with severity
+5. **Create tasks:** Refactor tasks for each critical issue
+6. **Write architecture:** Draft → `.dreamteam/temp/`, then `memory-set architecture <file>`. DB only.
 
 ## Checks
 
@@ -29,4 +31,4 @@ description: Audits architecture, finds duplicates, analyzes dependencies. Use w
 
 - Audit report (markdown)
 - Refactor tasks for critical issues
-- Update `.dreamteam/memory/architecture.md` with findings
+- **Architecture:** Write draft to `.dreamteam/temp/architecture_new.md`, then Terminal → `memory-set architecture <file>`. Do NOT write to `.dreamteam/memory/architecture.md` directly — DB only.

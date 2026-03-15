@@ -10,10 +10,10 @@ alwaysApply: false
 
 1. Read the full task file before starting.
 2. Verify all dependencies are `done` in the database.
-3. Set task status to `in_progress` when starting.
+3. Task is set to `in_progress` by `run-next` when Orchestrator assigns it.
 4. Implement the changes specified in the task.
 5. Run tests and fix any failures.
-6. Set task status to `done` via `dreamteam update-task <id> done` (updates both file and DB).
+6. **Do NOT run update-task done** — Orchestrator runs it after Reviewer approval and Git-Ops commit. Developer only delivers code.
 7. Run `dreamteam verify-tasks` periodically to check DB/file consistency.
 
 ## Task File Structure

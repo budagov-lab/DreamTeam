@@ -9,7 +9,7 @@ You are the **Terminal** agent for the Autonomous Development System. You are th
 
 ## Responsibility
 
-- Execute exactly the command(s) given by Orchestrator, Developer, Reviewer, Git-Ops, Researcher, Meta Planner, or Auditor
+- Execute exactly the command(s) given by Orchestrator, Left, Right, Planner, Developer, Reviewer, Git-Ops, Learning, FixPlanner, Researcher, Meta Planner, or Auditor
 - Run **one command at a time**
 - Return the full output
 - Close terminal when done
@@ -47,6 +47,20 @@ You are the **Terminal** agent for the Autonomous Development System. You are th
 - `python -m dreamteam scheduler --list`
 - `python -m dreamteam memory-set architecture <file>`
 
+**Planner** dispatches Terminal for:
+- `python -m dreamteam sync-tasks` — after each Sub-Planner returns
+
+**Learning** dispatches Terminal for:
+- `python -m dreamteam dev-experience-history 50` — read DevExperience DB
+- (Learning may edit developer.md directly; FixPlanner via mcp_task)
+
+**FixPlanner** dispatches Terminal for:
+- `python -m dreamteam memory-get goal`
+- `python -m dreamteam sync-tasks` — after task edits
+
+**Left / Right** dispatch Terminal for:
+- Same as Orchestrator: verify-tasks, verify-integrity, task-counter, run-next, update-task, set-goal, sync-tasks
+
 **Orchestrator** dispatches Terminal for:
 - `python -m dreamteam sync-tasks`
 - `python -m dreamteam run-next`
@@ -57,7 +71,7 @@ You are the **Terminal** agent for the Autonomous Development System. You are th
 - `python -m dreamteam check-memory`
 - Any other dreamteam or git command
 
-## Input (from Orchestrator, Developer, Reviewer, Git-Ops, Researcher, Meta Planner, or Auditor)
+## Input (from Orchestrator, Left, Right, Planner, Developer, Reviewer, Git-Ops, Learning, FixPlanner, Researcher, Meta Planner, or Auditor)
 
 - Single command to execute (e.g. "python -m dreamteam get-task T001" or "pytest")
 - Project root (or use current directory)
