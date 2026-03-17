@@ -21,35 +21,55 @@ The system uses a recursive orchestration loop. The **Main Orchestrator** dispat
 
 ```mermaid
 graph TD
-    User([Goal]) --> Main[Main Orchestrator]
+    %% Node Definitions
+    classDef main fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10,ry:10
+    classDef sub fill:#f8fafc,stroke:#64748b,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10
+    classDef worker fill:#fff,stroke:#94a3b8,stroke-width:1px,rx:5,ry:5
+    classDef maintenance fill:#ecfdf5,stroke:#10b981,stroke-width:1px,rx:5,ry:5
+    classDef storage fill:#f1f5f9,stroke:#475569,stroke-width:2px,shape:cylinder
+    classDef terminal fill:#0f172a,color:#fff,stroke:#1e293b,rx:2,ry:2
 
-    subgraph "Cruiser Control"
-        Main <--> |Switch Batch / Context Switch| LR{Left / Right Sub-Agents}
+    %% Flow
+    User([Goal]) --> Main
+    Main[Main Orchestrator] :::main
+    
+    subgraph Cruiser ["Cruiser Control Layer"]
+        Main <--> |Context Switching| LR{Left / Right Sub-Agents} :::sub
     end
 
-    subgraph "Operations (Managed by Sub-Agents)"
-        LR --> WorkerP[Planner / Sub-Planner]
-        LR --> Loop[Execution Loop]
+    subgraph Operations ["Active Mission Operations"]
+        LR --> Planning[Planning Phase] :::worker
+        LR --> Execution[Execution Loop] :::worker
         
-        subgraph "Execution Loop"
-            Loop --> Dev[Developer] --> Rev[Reviewer]
-            Rev --> Exp[DevExperiencer] --> Git[Git-Ops]
-            Git --> Done[update-task Done]
-            Done -->|Continue Batch| Loop
+        subgraph PLogic ["Planner Workers"]
+            Planning --> P1[Planner] :::worker
+            P1 --> P2[Sub-Planner] :::worker
         end
         
-        subgraph "Self-Maintenance Chain"
-            Done -->|TRIGGER_*| Maintenance[Learning / Researcher / Meta / Auditor]
-            Maintenance --> Learn[Learning Agent] --> Fix[FixPlanner]
+        subgraph ELogic ["Standard Loop"]
+            Execution --> Dev[Developer] :::worker
+            Dev --> Rev[Reviewer] :::worker
+            Rev --> Exp[DevExperiencer] :::worker
+            Exp --> Git[Git-Ops] :::worker
+            Git --> Done[update-task Done] :::worker
+            Done -->|Continue Batch| Execution
+        end
+        
+        subgraph MLogic ["Self-Correction Chain"]
+            Done -->|TRIGGER_*| Maintenance[Maintenance Agents] :::maintenance
+            Maintenance --> Learn[Learning Agent] :::maintenance
+            Learn --> Fix[FixPlanner] :::maintenance
         end
 
-        %% Tool Usage
-        Dev & Rev & WorkerP & Maintenance -.-> Term[[Terminal Subagent]]
+        %% Common Tools
+        ELogic & PLogic & MLogic -.-> Term[Terminal Subagent] :::terminal
     end
     
-    WorkerP --> DAG[(Task DAG)]
-    Fix -.->|Fixes & Reorders| DAG
-    Maintenance -.->|Optimize & Compress| DAG & Memory[(Memory DB)]
+    %% Database Links
+    PLogic --> DAG[(Task DAG)] :::storage
+    Fix -.->|Auto-Correction| DAG
+    MLogic -.->|Optimization| DAG
+    MLogic -.->|Refinement| Mem[(Memory DB)] :::storage
 ```
 
 ---
