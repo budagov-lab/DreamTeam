@@ -20,6 +20,7 @@ A long-range **Autonomous Development Cruiser for Cursor** capable of executing 
 The system uses a recursive orchestration loop. The **Main Orchestrator** dispatches specialized sub-orchestrators to handle batches of tasks, keeping the main context clean and stable.
 
 ```mermaid
+---
 config:
   layout: fixed
   look: handDrawn
