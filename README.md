@@ -20,7 +20,7 @@ A long-range **Autonomous Development Cruiser for Cursor** capable of executing 
 The system uses a recursive orchestration loop. The **Main Orchestrator** dispatches specialized sub-orchestrators to handle batches of tasks, keeping the main context clean and stable.
 
 ```mermaid
-graph TD
+graph LR
     %% Global Nodes
     classDef clsMain fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10
     classDef clsOrch fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,stroke-dasharray: 4,rx:10
@@ -33,44 +33,49 @@ graph TD
     User([User Goal]) --> MO[Main Orchestrator]:::clsMain
 
     subgraph Engine ["DreamTeam Cruiser Engine"]
-        direction TB
-        MO <--> |"Dispatcher Switch"| LR{Left / Right Sub-Agents}:::clsOrch
+        direction LR
+        MO <--> |"Dispatcher Switch"| LR_Agent{Left / Right Sub-Agents}:::clsOrch
         
         subgraph Context ["Isolated Agent Context"]
             direction TB
-            LR --> PlanMode[Planning Stage]:::clsWorker
-            LR --> ExecMode[Execution Loop]:::clsWorker
+            LR_Agent --> Ops
+            
+            subgraph Ops ["Operational Phases"]
+                direction LR
+                subgraph PhaseP ["Planning"]
+                    direction TB
+                    P1[Planner]:::clsWorker --> P2[Sub-Planner]:::clsWorker
+                end
 
-            subgraph PhaseP ["Mission Planning"]
-                PlanMode --> P1[Planner]:::clsWorker --> P2[Sub-Planner]:::clsWorker
-            end
+                subgraph PhaseE ["Execution Loop"]
+                    direction TB
+                    E1[Developer]:::clsWorker --> E2[Reviewer]:::clsWorker
+                    E2 --> E3[DevExperience]:::clsWorker 
+                    E3 --> E4[Git-Ops]:::clsWorker
+                    E4 --> Upd[update-task Done]:::clsWorker
+                end
 
-            subgraph PhaseE ["Micro-Task Lifecycle"]
-                ExecMode --> Dev[Developer]:::clsWorker --> Rev[Reviewer]:::clsWorker
-                Rev --> Exp[DevExperience]:::clsWorker --> Git[Git-Ops]:::clsWorker
-                Git --> Upd[update-task Done]:::clsWorker
-                Upd --> |"Loop N < 15"| ExecMode
-            end
-
-            subgraph PhaseM ["Self-Maintenance Chain"]
-                Upd --> |"TRIGGER_*"| Maintenance[Learning / Researcher / Meta]:::clsMaintain
-                Maintenance --> Fix[FixPlanner]:::clsMaintain
+                subgraph PhaseM ["Maintenance"]
+                    direction TB
+                    M1[Learning / Meta]:::clsMaintain --> M2[FixPlanner]:::clsMaintain
+                    M3[Researcher]:::maintain
+                end
             end
 
             %% Core Interface
-            PhaseP & PhaseE & PhaseM -.-> Term[[Terminal Subagent]]:::clsInfra
+            Ops -.-> Term[[Terminal Subagent]]:::clsInfra
         end
 
         %% Persistence Layer
-        P2 & Fix & Maintenance --- DAG[(Task DAG)]:::clsDB
-        Maintenance --- RAG[(Memory DB / RAG)]:::clsDB
+        P2 & M2 --- DAG[(Task DAG)]:::clsDB
+        M3 --- RAG[(Memory DB / RAG)]:::clsDB
     end
 
     %% Switching Signals
-    Upd -.-> |"1. Batch Limit (15 tasks)\n2. Context Overflow (>80 files)"| MO
-    P2 -.-> |"3. Planning Complete"| MO
+    Upd -.-> |"1. Batch Limit (15)\n2. Context Overflow"| MO
+    P2 -.-> |"3. Planning Done"| MO
 
-    %% Box Styling
+    %% Outer Styling
     style Engine fill:#fdfaff,stroke:#c4b5fd,stroke-width:2px
     style Context fill:#f8fafc,stroke:#e2e8f0,stroke-width:1px
 ```
