@@ -22,54 +22,54 @@ The system uses a recursive orchestration loop. The **Main Orchestrator** dispat
 ```mermaid
 graph TD
     %% Node Definitions
-    classDef main fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10,ry:10
-    classDef sub fill:#f8fafc,stroke:#64748b,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10
-    classDef worker fill:#fff,stroke:#94a3b8,stroke-width:1px,rx:5,ry:5
-    classDef maintenance fill:#ecfdf5,stroke:#10b981,stroke-width:1px,rx:5,ry:5
-    classDef storage fill:#f1f5f9,stroke:#475569,stroke-width:2px,shape:cylinder
-    classDef terminal fill:#0f172a,color:#fff,stroke:#1e293b,rx:2,ry:2
+    classDef clsMain fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10,ry:10
+    classDef clsSub fill:#f8fafc,stroke:#64748b,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10
+    classDef clsWorker fill:#fff,stroke:#94a3b8,stroke-width:1px,rx:5,ry:5
+    classDef clsMaintenance fill:#ecfdf5,stroke:#10b981,stroke-width:1px,rx:5,ry:5
+    classDef clsStorage fill:#f1f5f9,stroke:#475569,stroke-width:2px,shape:cylinder
+    classDef clsTerminal fill:#0f172a,color:#fff,stroke:#1e293b,rx:2,ry:2
 
     %% Flow
     User([Goal]) --> Main
-    Main[Main Orchestrator] :::main
+    Main[Main Orchestrator]:::clsMain
     
     subgraph Cruiser ["Cruiser Control Layer"]
-        Main <--> |Context Switching| LR{Left / Right Sub-Agents} :::sub
+        Main <--> |Context Switching| LR{Left / Right Sub-Agents}:::clsSub
     end
 
     subgraph Operations ["Active Mission Operations"]
-        LR --> Planning[Planning Phase] :::worker
-        LR --> Execution[Execution Loop] :::worker
+        LR --> Planning[Planning Phase]:::clsWorker
+        LR --> Execution[Execution Loop]:::clsWorker
         
         subgraph PLogic ["Planner Workers"]
-            Planning --> P1[Planner] :::worker
-            P1 --> P2[Sub-Planner] :::worker
+            Planning --> P1[Planner]:::clsWorker
+            P1 --> P2[Sub-Planner]:::clsWorker
         end
         
         subgraph ELogic ["Standard Loop"]
-            Execution --> Dev[Developer] :::worker
-            Dev --> Rev[Reviewer] :::worker
-            Rev --> Exp[DevExperiencer] :::worker
-            Exp --> Git[Git-Ops] :::worker
-            Git --> Done[update-task Done] :::worker
+            Execution --> Dev[Developer]:::clsWorker
+            Dev --> Rev[Reviewer]:::clsWorker
+            Rev --> Exp[DevExperiencer]:::clsWorker
+            Exp --> Git[Git-Ops]:::clsWorker
+            Git --> Done[update-task Done]:::clsWorker
             Done -->|Continue Batch| Execution
         end
         
         subgraph MLogic ["Self-Correction Chain"]
-            Done -->|TRIGGER_*| Maintenance[Maintenance Agents] :::maintenance
-            Maintenance --> Learn[Learning Agent] :::maintenance
-            Learn --> Fix[FixPlanner] :::maintenance
+            Done -->|TRIGGER_*| Maintenance[Maintenance Agents]:::clsMaintenance
+            Maintenance --> Learn[Learning Agent]:::clsMaintenance
+            Learn --> Fix[FixPlanner]:::clsMaintenance
         end
 
         %% Common Tools
-        ELogic & PLogic & MLogic -.-> Term[Terminal Subagent] :::terminal
+        ELogic & PLogic & MLogic -.-> Term[Terminal Subagent]:::clsTerminal
     end
     
     %% Database Links
-    PLogic --> DAG[(Task DAG)] :::storage
+    PLogic --> DAG[(Task DAG)]:::clsStorage
     Fix -.->|Auto-Correction| DAG
     MLogic -.->|Optimization| DAG
-    MLogic -.->|Refinement| Mem[(Memory DB)] :::storage
+    MLogic -.->|Refinement| Mem[(Memory DB)]:::clsStorage
 ```
 
 ---
