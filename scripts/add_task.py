@@ -7,27 +7,28 @@ import sys
 import re
 import json
 from datetime import datetime, timezone
+from typing import Any
 
-import project
+import project # type: ignore
 DB_PATH = project.get_db_path()
 TASKS_DIR = project.get_tasks_dir()
 
 
-def parse_task_file(content: str) -> dict | None:
+def parse_task_file(content: str) -> dict[str, Any] | None:
     """Parse task markdown frontmatter into dict."""
     # Match id:, title:, status:, priority:, dependencies:, owner:
     patterns = {
-        "id": r"id:\s*(.+)",
-        "title": r"title:\s*(.+)",
-        "status": r"status:\s*(.+)",
-        "priority": r"priority:\s*(\d+)",
-        "dependencies": r"dependencies:\s*(.+)",
-        "owner": r"owner:\s*(.+)",
-        "sort_order": r"sort_order:\s*(\d+)",
+        "id": r"^id:\s*(.+)",
+        "title": r"^title:\s*(.+)",
+        "status": r"^status:\s*(.+)",
+        "priority": r"^priority:\s*(\d+)",
+        "dependencies": r"^dependencies:\s*(.+)",
+        "owner": r"^owner:\s*(.+)",
+        "sort_order": r"^sort_order:\s*(\d+)",
     }
-    result = {}
+    result: dict[str, Any] = {}
     for key, pattern in patterns.items():
-        m = re.search(pattern, content, re.IGNORECASE)
+        m = re.search(pattern, content, re.MULTILINE | re.IGNORECASE)
         if m:
             val = m.group(1).strip()
             if key == "dependencies":
@@ -72,7 +73,7 @@ def _ensure_sort_order_column(cursor: sqlite3.Cursor) -> None:
 
 def add_task_to_cursor(
     cursor: sqlite3.Cursor,
-    task_data: dict,
+    task_data: dict[str, Any],
     now: str | None = None,
     upsert: bool = True,
 ) -> None:
@@ -132,7 +133,7 @@ def add_task_to_cursor(
         )
 
 
-def add_task(task_data: dict, upsert: bool = True) -> bool:
+def add_task(task_data: dict[str, Any], upsert: bool = True) -> bool:
     """Insert or update task in database (single task, commits)."""
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH, timeout=10.0)
@@ -141,8 +142,12 @@ def add_task(task_data: dict, upsert: bool = True) -> bool:
         add_task_to_cursor(cursor, task_data, upsert=upsert)
         conn.commit()
         return True
+    except Exception as e:
+        print(f"Error adding task: {e}", file=sys.stderr)
+        return False
     finally:
         conn.close()
+    return False
 
 
 def main() -> None:
@@ -152,7 +157,7 @@ def main() -> None:
         sys.exit(1)
 
     arg = sys.argv[1]
-    content = None
+    content = ""
 
     if os.path.exists(arg):
         with open(arg, encoding="utf-8") as f:
@@ -168,9 +173,10 @@ def main() -> None:
         sys.exit(1)
 
     task_data = parse_task_file(content)
-    if not task_data:
+    if task_data is None:
         print("Could not parse task (missing id)", file=sys.stderr)
         sys.exit(1)
+        return
     task_data["content"] = content
     add_task(task_data)
     print(f"Task {task_data['id']} added/updated.")

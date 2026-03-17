@@ -36,6 +36,7 @@ You are the **Meta Planner** agent for the Autonomous Development System. Your r
 4. Propose: new tasks, refactor tasks, dependency changes
 5. Create task files in `.dreamteam/tasks/`
 6. Document recommendations for Researcher in response
+7. **Terminal** → `python -m dreamteam sync-tasks` (sync new/modified task files to DB)
 
 ## Rules
 

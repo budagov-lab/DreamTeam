@@ -35,6 +35,7 @@ SCRIPT_MAP = {
     "init-dev-experience": "init_dev_experience.py",
     "record-dev-experience": "record_dev_experience.py",
     "dev-experience-history": "get_dev_experience_history.py",
+    "dashboard": "dashboard.py",
 }
 
 
@@ -123,12 +124,13 @@ def main() -> None:
         print("  memory-to-files      Sync memory from DB to files")
         print("  recent-tasks [N]     List last N done tasks from DB")
         print("  dag-state            DAG state for Meta Planner (from DB)")
+        print("  dashboard            Launch Analytics Web Dashboard")
         print("  bootstrap            Create .cursorrules in cwd (for empty project)")
         print()
         sys.exit(0)
 
     cmd = sys.argv[1].lower().replace("_", "-")
-    args = sys.argv[2:]
+    args = sys.argv[2:] # type: ignore
 
     if cmd == "bootstrap":
         _run_bootstrap()
@@ -136,8 +138,8 @@ def main() -> None:
 
     if cmd == "new-project":
         sys.path.insert(0, SCRIPTS_DIR)
-        import new_project
-        path = args[0] if args else os.getcwd()
+        import new_project # type: ignore
+        path = args[0] if len(args) > 0 else os.getcwd()
         root = new_project.create_project(path)
         print(f"Project created: {root}")
         print()
@@ -153,7 +155,7 @@ def main() -> None:
     if cmd in SCRIPT_MAP:
         cwd = os.getcwd()
         sys.path.insert(0, SCRIPTS_DIR)
-        import project
+        import project # type: ignore
         cwd = project.get_project_root()
         exit_code = run_script(SCRIPT_MAP[cmd], args, cwd=cwd)
         sys.exit(exit_code)

@@ -44,12 +44,10 @@ def get_next_task() -> str | None:
             ORDER BY sort_order ASC, priority DESC, id ASC
             """
         )
-        rows = cursor.fetchall()
-
-    for task_id, title, status, priority, deps_str in rows:
-        deps = parse_dependencies(deps_str)
-        if all(d in done_ids for d in deps):
-            return task_id
+        for task_id, title, status, priority, deps_str in cursor:
+            deps = parse_dependencies(deps_str)
+            if all(d in done_ids for d in deps):
+                return task_id
 
     return None
 

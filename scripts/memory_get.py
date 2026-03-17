@@ -8,7 +8,7 @@ import project
 DB_PATH = project.get_db_path()
 MEMORY_DIR = project.get_memory_dir()
 
-VALID_KEYS = ("summaries", "architecture", "goal")
+VALID_KEYS = ("summaries", "architecture", "goal", "planning_complete")
 
 
 def get_memory(key: str) -> str | None:
@@ -46,7 +46,7 @@ def _fallback_from_file(key: str) -> str | None:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        print("Usage: python memory_get.py <summaries|architecture|goal>", file=sys.stderr)
+        print("Usage: python memory_get.py <summaries|architecture|goal|planning_complete>", file=sys.stderr)
         sys.exit(1)
 
     key = sys.argv[1].lower()

@@ -5,7 +5,7 @@ import sqlite3
 import os
 import sys
 
-import project
+import project # type: ignore
 DB_PATH = project.get_db_path()
 MEMORY_DIR = project.get_memory_dir()
 
@@ -16,6 +16,8 @@ def init_db(reset: bool = False) -> None:
     conn = sqlite3.connect(DB_PATH, timeout=10.0)
     try:
         cursor = conn.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL;")
+        cursor.execute("PRAGMA synchronous=NORMAL;")
 
         if reset:
             cursor.execute("DROP TABLE IF EXISTS tasks")
@@ -35,6 +37,7 @@ def init_db(reset: bool = False) -> None:
             owner TEXT,
             content TEXT,
             sort_order INTEGER DEFAULT 0,
+            started_at DATETIME,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -45,6 +48,10 @@ def init_db(reset: bool = False) -> None:
             pass  # Column already exists
         try:
             cursor.execute("ALTER TABLE tasks ADD COLUMN sort_order INTEGER DEFAULT 0")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        try:
+            cursor.execute("ALTER TABLE tasks ADD COLUMN started_at DATETIME")
         except sqlite3.OperationalError:
             pass  # Column already exists
         cursor.execute("""

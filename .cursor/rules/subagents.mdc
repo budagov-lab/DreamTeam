@@ -1,10 +1,40 @@
 ---
-description: When dispatching subagents, use .cursor/agents/orchestrator.md
-globs: [".dreamteam/tasks/**", ".cursor/agents/**"]
+description: Subagent dispatch rules for Left/Right orchestrators
+globs: [".cursor/agents/**/*.md"]
+alwaysApply: false
 ---
 
 # Subagent Dispatch
 
-When dispatching Developer, Reviewer, Planner, or trigger-based agents:
+When Left or Right need to dispatch a subagent:
 
-**Load prompt from `.cursor/agents/orchestrator.md`** — full dispatch flow and rules.
+**Load the appropriate agent prompt from `.cursor/agents/`** — each agent has its own file.
+**Full dispatch rules and agent list:** `.cursor/AGENTS.md`
+
+## Dispatch via mcp_task
+
+Use `mcp_task` with the correct `subagent_type`:
+
+| Agent | subagent_type |
+|-------|--------------|
+| Developer | `developer` |
+| Reviewer | `code-reviewer` |
+| Git-Ops | `git-ops` |
+| Planner | `planner` |
+| Sub-Planner | `planner-sub` (Planner only, not Left/Right) |
+| Researcher | `researcher` |
+| Meta Planner | `meta-planner` |
+| Auditor | `auditor` |
+| Learning | `learning` |
+| FixPlanner | `fix-planner` |
+| DevExperiencer | `dev-experiencer` |
+| Terminal | `shell` |
+| Left | `orchestrator-left` (Main Orchestrator only) |
+| Right | `orchestrator-right` (Main Orchestrator only) |
+
+## Left/Right Terminal Commands (Orchestration Only)
+
+Left and Right run Terminal (`shell`) subagent ONLY for:
+`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`
+
+**All other work goes to the appropriate specialized agent.**

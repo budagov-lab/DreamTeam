@@ -4,7 +4,7 @@
 import sqlite3
 import os
 
-import project
+import project # type: ignore
 DB_PATH = project.get_dev_experience_db_path()
 
 
@@ -25,6 +25,7 @@ def init_dev_experience() -> None:
                 technologies_used TEXT,
                 approaches_used TEXT,
                 critical_feedback TEXT,
+                tokens_estimated INTEGER,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         """)

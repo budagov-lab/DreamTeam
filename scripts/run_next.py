@@ -71,28 +71,23 @@ def main() -> None:
 
     # 3. Quick integrity fix + ensure indexes (migration for existing DBs)
     try:
-        import sqlite3
         sys.path.insert(0, SCRIPTS_DIR)
         import db_utils
         db_path = project.get_db_path()
         if os.path.exists(db_path):
+            import sqlite3
             conn = sqlite3.connect(db_path, timeout=10.0)
             try:
                 cur = conn.cursor()
+                # Ensure scheduler indexes exist
                 cur.execute(
                     "CREATE INDEX IF NOT EXISTS idx_tasks_status_priority_id ON tasks(status, priority DESC, id)"
                 )
                 cur.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)")
-                cur.execute("PRAGMA table_info(tasks)")
-                if not any(col[1] == "sort_order" for col in cur.fetchall()):
-                    cur.execute("ALTER TABLE tasks ADD COLUMN sort_order INTEGER DEFAULT 0")
-                cur.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
-                m = cur.fetchone()
-                cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'done'")
-                actual = cur.fetchone()[0]
-                if m is not None and m[0] != actual:
-                    if db_utils.fix_tasks_completed_metric():
-                        print("Fixed tasks_completed drift.", file=sys.stderr)
+                conn.commit()
+                
+                # Fix metrics drift
+                db_utils.fix_tasks_completed_metric()
             finally:
                 conn.close()
     except Exception:

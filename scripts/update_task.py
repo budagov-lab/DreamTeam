@@ -29,10 +29,10 @@ def update_task_file(task_id: str, status: str, owner: str | None = None) -> boo
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 content = f.read()
-            content = re.sub(r"status:\s*\w+", f"status: {status}", content, flags=re.IGNORECASE)
+            content = re.sub(r"^status:\s*\w+", f"status: {status}", content, flags=re.MULTILINE | re.IGNORECASE)
             if owner is not None:
-                content = re.sub(r"owner:\s*.+", f"owner: {owner}", content, flags=re.IGNORECASE)
-                if "owner:" not in content.lower():
+                content = re.sub(r"^owner:\s*.+", f"owner: {owner}", content, flags=re.MULTILINE | re.IGNORECASE)
+                if not re.search(r"^owner:", content, flags=re.MULTILINE | re.IGNORECASE):
                     content = content.rstrip() + f"\nowner: {owner}\n"
             with open(path, "w", encoding="utf-8") as f:
                 f.write(content)
@@ -55,16 +55,28 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
         cursor = conn.cursor()
         now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
-        if owner is not None:
-            cursor.execute(
-                "UPDATE tasks SET status = ?, owner = ?, updated_at = ? WHERE id = ?",
-                (status, owner, now, task_id),
-            )
+        if status == "in_progress":
+            if owner is not None:
+                cursor.execute(
+                    "UPDATE tasks SET status = ?, owner = ?, updated_at = ?, started_at = ? WHERE id = ?",
+                    (status, owner, now, now, task_id),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ?, started_at = ? WHERE id = ?",
+                    (status, now, now, task_id),
+                )
         else:
-            cursor.execute(
-                "UPDATE tasks SET status = ?, updated_at = ? WHERE id = ?",
-                (status, now, task_id),
-            )
+            if owner is not None:
+                cursor.execute(
+                    "UPDATE tasks SET status = ?, owner = ?, updated_at = ? WHERE id = ?",
+                    (status, owner, now, task_id),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ? WHERE id = ?",
+                    (status, now, task_id),
+                )
         affected = cursor.rowcount
         if affected > 0:
             if status == "done":
@@ -76,6 +88,23 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
                     "UPDATE metrics SET value = (SELECT COUNT(*) FROM tasks WHERE status = 'done') WHERE metric = 'tasks_completed'"
                 )
         if affected > 0 and status == "done":
+            try:
+                cursor.execute("SELECT started_at FROM tasks WHERE id = ?", (task_id,))
+                row_start = cursor.fetchone()
+                minutes = 0
+                if row_start and row_start[0]:
+                    try:
+                        start_dt = datetime.strptime(row_start[0], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+                        minutes = int((datetime.now(timezone.utc) - start_dt).total_seconds() / 60)
+                    except ValueError:
+                        pass
+                
+                import telemetry
+                tokens = telemetry.estimate_tokens_for_task(task_id)
+                telemetry.record_task_duration(task_id, minutes, tokens)
+            except Exception as e:
+                print(f"Telemetry error: {e}", file=sys.stderr)
+
             cursor.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
             row = cursor.fetchone()
             count = row[0] if row else 0

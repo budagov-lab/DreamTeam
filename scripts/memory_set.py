@@ -9,7 +9,7 @@ import project
 DB_PATH = project.get_db_path()
 MEMORY_DIR = project.get_memory_dir()
 
-VALID_KEYS = ("summaries", "architecture", "goal")
+VALID_KEYS = ("summaries", "architecture", "goal", "planning_complete")
 
 
 def set_memory(key: str, content: str) -> bool:
@@ -48,7 +48,7 @@ def set_memory(key: str, content: str) -> bool:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        print("Usage: python memory_set.py <summaries|architecture|goal> [file]", file=sys.stderr)
+        print("Usage: python memory_set.py <summaries|architecture|goal|planning_complete> [file]", file=sys.stderr)
         print("  Reads from stdin if no file, else from file.", file=sys.stderr)
         sys.exit(1)
 

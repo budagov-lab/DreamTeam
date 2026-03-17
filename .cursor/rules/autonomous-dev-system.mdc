@@ -13,7 +13,27 @@ When user invokes `/start` or `/run`:
 - **ALWAYS** delegate to Left/Right. Main Orchestrator does NOT run Developer/Planner loop — Left/Right do.
 - **Context minimization** — Orchestrator runs in main chat. Do NOT read files (architecture, tasks, code). Pass task ID only. Subagents read via MCP.
 - **Main Orchestrator** — ONLY dispatches Left/Right. Does NOT run Terminal at all. Monitors context, switches Left↔Right before overflow.
-- **Left/Right** — Do ALL work: Terminal (set-goal, verify-tasks, run-next, update-task, recover), Planner, Developer, Reviewer, Git-Ops, etc.
+- **Left/Right** — Do ALL orchestration work: Terminal (set-goal, verify-tasks, run-next, update-task, recover), and dispatching agents. They do NOT implement code or do reviews themselves.
+
+## Left/Right — Strict Delegation (CRITICAL)
+
+Left and Right are **dispatchers only**. They NEVER:
+- Write or modify code files directly
+- Execute `pytest`, `git`, build, or lint commands themselves
+- Perform code review or approve/reject code
+- Read source code files to implement anything
+
+Left/Right ONLY run Terminal subagent for these orchestration commands:
+`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`
+
+Everything else is delegated to the appropriate agent:
+- **Code implementation** → Developer (mcp_task)
+- **Code review / tests** → Reviewer (mcp_task)
+- **Git commit** → Git-Ops (mcp_task)
+- **Planning** → Planner (mcp_task)
+- **Memory / context** → Researcher (mcp_task)
+
+If Left/Right find themselves writing code or running pytest/git — they are doing it wrong. Stop and dispatch the correct agent.
 
 ## Task Execution
 
@@ -35,7 +55,7 @@ dependencies: []
 owner: composer_1
 ```
 
-Valid statuses: `todo`, `in_progress`, `done`, `blocked`.
+Valid statuses: `todo`, `in_progress`, `done`, `blocked`, `deprecated`.
 
 ## Code Ownership
 
@@ -49,12 +69,17 @@ Valid statuses: `todo`, `in_progress`, `done`, `blocked`.
 - Follow layer hierarchy defined in `.dreamteam/memory/architecture.md`.
 - When adding new modules, update `.dreamteam/memory/architecture.md` or create a task for Researcher to do so.
 
-## Triggers
+## Triggers — Order of Processing (CRITICAL)
 
-- Every 10 tasks: Learning runs (analyzes DevExperience, may update Developer, dispatches FixPlanner).
-- Every 20 tasks: Researcher runs (context compression).
-- Every 50 tasks: Meta Planner runs (DAG optimization).
-- Every 200 tasks: Auditor runs (architecture audit).
+Triggers are printed by `update-task done`. When multiple triggers fire simultaneously, process in this strict order:
+
+1. **TRIGGER_LEARNING** (every 10) → Learning → FixPlanner
+2. **TRIGGER_RESEARCHER** (every 20) → Researcher → memory-to-files → vector-index → check-memory
+3. **TRIGGER_META_PLANNER** (every 50) → Meta Planner → sync-tasks
+4. **TRIGGER_AUDITOR** (every 200) → Auditor → memory-to-files
+5. **TRIGGER_BATCH_SWITCH** (every 15) → Return BATCH_DONE immediately (after all other triggers above are handled)
+
+**Source of truth:** Triggers come from `update-task done` output. The `task-counter` command is read-only diagnostics — Left/Right do NOT re-process triggers from task-counter output at batch start.
 
 ## Parallelism (FORBIDDEN)
 
@@ -65,8 +90,7 @@ Valid statuses: `todo`, `in_progress`, `done`, `blocked`.
 
 ## Terminal
 
-- **Terminal subagent** — Main Orchestrator: NONE. Left/Right: all Terminal (verify-tasks, run-next, update-task, recover, get-task, pytest, git-commit, memory-get, memory-to-files).
-- One command at a time. No parallel terminals.
+- **Terminal subagent** — Main Orchestrator: NONE. Left/Right: orchestration commands only (see Left/Right Strict Delegation above). One command at a time.
 
 ## Commands
 

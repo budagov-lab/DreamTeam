@@ -16,16 +16,18 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 - **Planner** — Left/Right dispatch (planner). Planner breaks into epics, dispatches Sub-Planner.
 - **Planner-Sub** — Planner dispatches (planner-sub), not Orchestrator
 - **DevExperiencer** — Left/Right dispatch after Reviewer (dev-experiencer)
-- **Learning** — Every 10 tasks, or on cyclic failure (task blocked after 2 Critical retries). Analyzes DevExperience, updates Developer, dispatches FixPlanner (learning)
+- **Learning** — Every 10 tasks (TRIGGER_LEARNING from update-task done). Analyzes DevExperience, writes developer-addendum, dispatches FixPlanner with explicit task IDs (learning)
 - **FixPlanner** — Corrects tasks based on Learning analysis (fix-planner)
 - **Developer** — Task from scheduler ready for implementation
 - **Reviewer** — After each task completion (spec compliance, then code quality)
 - **Git-Ops** — After Reviewer approval — git commit (ONLY Git-Ops does commits)
 - **Terminal** — dreamteam commands (fallback when MCP unavailable)
 - **MCP dreamteam-db** — DB tools: dreamteam_get_task, dreamteam_get_memory, dreamteam_set_memory, dreamteam_get_dag_state, dreamteam_recent_tasks
-- **Researcher** — When `task_counter.py` prints `TRIGGER_RESEARCHER`
-- **Meta Planner** — When `task_counter.py` prints `TRIGGER_META_PLANNER`
-- **Auditor** — When `task_counter.py` prints `TRIGGER_AUDITOR`
+- **Researcher** — When `update-task done` prints `TRIGGER_RESEARCHER` (every 20 tasks)
+- **Meta Planner** — When `update-task done` prints `TRIGGER_META_PLANNER` (every 50 tasks)
+- **Auditor** — When `update-task done` prints `TRIGGER_AUDITOR` (every 200 tasks)
+
+**Trigger source:** All TRIGGER_* come from `update-task done` output. `task-counter` is diagnostics only — Left/Right do not re-process triggers from it.
 
 **How to dispatch:**
 - Use `mcp_task` with `subagent_type`: `developer`, `code-reviewer`, `planner`, `planner-sub`, `researcher`, `meta-planner`, `auditor`, `git-ops`, `shell` (Terminal), `orchestrator-left`, `orchestrator-right`, `dev-experiencer`, `learning`, `fix-planner`
@@ -35,7 +37,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 **Main Orchestrator workflow:** verify-tasks → set-goal → Dispatch Left → (Left returns BATCH_DONE) → Dispatch Right → alternate until ALL_COMPLETE.
 
-**Left/Right workflow:** run-next → Developer → Reviewer → DevExperiencer → Git-Ops → update-task done. TRIGGER_* → Learning/Researcher/Meta Planner/Auditor.
+**Left/Right workflow:** run-next → Developer → Reviewer → DevExperiencer (pass: task_id, result, attempts) → Git-Ops → update-task done → process TRIGGER_* in order: Learning → Researcher (+memory-to-files) → Meta Planner (+sync-tasks) → Auditor (+memory-to-files) → BATCH_SWITCH → run-next.
 
 ## Agent Prompts
 

@@ -1,6 +1,6 @@
 ---
 description: Task execution rules for Developer agents
-globs: .dreamteam/tasks/**/*.md
+globs: [".dreamteam/tasks/**/*.md"]
 alwaysApply: false
 ---
 
