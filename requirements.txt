@@ -1,4 +1,6 @@
-# Core: stdlib only (no install needed)
-# Optional for 100+ tasks (vector memory / semantic search):
+# Core: mcp, vector memory (RAG), and data utils
+mcp>=1.0.0
 sentence-transformers>=2.2.0
 numpy>=1.24.0
+qdrant-client>=1.7.0
+requests>=2.31.0

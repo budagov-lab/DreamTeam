@@ -36,6 +36,9 @@ SCRIPT_MAP = {
     "record-dev-experience": "record_dev_experience.py",
     "dev-experience-history": "get_dev_experience_history.py",
     "dashboard": "dashboard.py",
+    "auditor": "auditor.py",
+    "researcher": "researcher.py",
+    "context-graph": "context_graph.py",
 }
 
 
@@ -61,6 +64,8 @@ Use `python -m dreamteam <command>` (or `dreamteam` if in PATH).
 | dreamteam check-memory | Validate memory |
 | dreamteam current-project | Show project root |
 | dreamteam git-commit <id> <msg> | Add, commit, push for task |
+| dreamteam auditor | Run system audit |
+| dreamteam researcher | Run researcher context prep |
 
 ## After deploy
 
@@ -125,6 +130,9 @@ def main() -> None:
         print("  recent-tasks [N]     List last N done tasks from DB")
         print("  dag-state            DAG state for Meta Planner (from DB)")
         print("  dashboard            Launch Analytics Web Dashboard")
+        print("  auditor              Run system audit (architecture/deps)")
+        print("  researcher           Prepare context for Researcher agent")
+        print("  context-graph list   Show module/function dependency graph")
         print("  bootstrap            Create .cursorrules in cwd (for empty project)")
         print()
         sys.exit(0)

@@ -91,14 +91,33 @@ def create_project(path: str) -> str:
             c.execute(f"DROP TABLE IF EXISTS {t}")
         conn.commit()
         c.execute("""CREATE TABLE IF NOT EXISTS tasks (
-            id TEXT PRIMARY KEY, title TEXT, status TEXT, priority INTEGER,
-            dependencies TEXT, owner TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)""")
+            id TEXT PRIMARY KEY,
+            title TEXT,
+            status TEXT,
+            priority INTEGER,
+            dependencies TEXT,
+            owner TEXT,
+            content TEXT,
+            sort_order INTEGER DEFAULT 0,
+            started_at DATETIME,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )""")
         c.execute("CREATE TABLE IF NOT EXISTS metrics (metric TEXT PRIMARY KEY, value INTEGER)")
         c.execute("CREATE TABLE IF NOT EXISTS context_graph (module TEXT, functions TEXT, dependencies TEXT, embedding BLOB)")
-        c.execute("CREATE TABLE IF NOT EXISTS vector_code (path TEXT, chunk TEXT, embedding BLOB, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)")
+        c.execute("""CREATE TABLE IF NOT EXISTS vector_code (
+            path TEXT,
+            chunk TEXT,
+            embedding BLOB,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )""")
         c.execute("""CREATE TABLE IF NOT EXISTS memory (
-            key TEXT PRIMARY KEY, content TEXT, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)""")
+            key TEXT PRIMARY KEY,
+            content TEXT,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )""")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status_priority_id ON tasks(status, priority DESC, id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)")
         c.execute("INSERT OR IGNORE INTO metrics (metric, value) VALUES ('tasks_completed', 0)")
         # Seed memory from created files
         for key, path in [("architecture", arch), ("summaries", summaries)]:

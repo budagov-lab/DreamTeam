@@ -21,6 +21,9 @@ Use `python -m dreamteam <command>` (works without PATH). Commands:
 - python -m dreamteam recover             — Recovery from failures
 - python -m dreamteam check-memory
 - python -m dreamteam current-project
+- python -m dreamteam researcher          — Update progress/architecture
+- python -m dreamteam auditor             — Audit codebase
+- python -m dreamteam dashboard           — Launch analytics
 
 ## After deployment
 

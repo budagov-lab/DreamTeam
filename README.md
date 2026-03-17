@@ -20,64 +20,99 @@ A long-range **Autonomous Development Cruiser for Cursor** capable of executing 
 The system uses a recursive orchestration loop. The **Main Orchestrator** dispatches specialized sub-orchestrators to handle batches of tasks, keeping the main context clean and stable.
 
 ```mermaid
-graph LR
-    %% Global Nodes
+config:
+  layout: fixed
+  look: handDrawn
+---
+flowchart BT
+ subgraph PhaseP["Planning"]
+    direction TB
+        P2["Sub-Planner"]
+        P1["Planner"]
+  end
+ subgraph PhaseE["Execution Loop"]
+    direction TB
+        E2["Reviewer"]
+        E1["Developer"]
+        E3["DevExperience"]
+        E4["Git-Ops"]
+        Upd["update-task Done"]
+  end
+ subgraph PhaseM["Maintenance"]
+    direction TB
+        M2["FixPlanner"]
+        M1["Learning / Meta"]
+        M3["Researcher"]
+        M4["Auditor"]
+  end
+ subgraph Ops["Operational Phases"]
+    direction LR
+        PhaseP
+        PhaseE
+        PhaseM
+  end
+ subgraph Context["Isolated Agent Context"]
+    direction TB
+        Ops
+        LR_Agent{"Left and Right Sub-Agents"}
+        Term[["Terminal Subagent"]]
+  end
+ subgraph Engine["DreamTeam Cruiser Engine"]
+    direction LR
+        MO["Main Orchestrator"]
+        Context
+        DAG[("Task DAG")]
+        RAG[("Memory DB / RAG")]
+        Counter[("Counter")]
+  end
+    User(["User Goal"]) --> MO
+    MO -- Dispatcher Switch --> LR_Agent
+    LR_Agent --> Ops
+    P1 --> P2
+    E1 --> E2
+    E2 --> E3
+    E3 --> E4
+    E4 --> Upd
+    M1 --> M2 & E1
+    Ops -.-> Term
+    P2 --- DAG
+    M2 --- DAG
+    M3 --- RAG
+    Upd -. "Batch Limit =15 or
+    Context Overflow" .-> MO
+    P2 -. Planning Done .-> MO
+    M4 --> RAG
+    Counter --> M4 & M3 & M1
+    DAG --> M4 & M3
+
+     P2:::clsWorker
+     P1:::clsWorker
+     E2:::clsWorker
+     E1:::clsWorker
+     E3:::clsWorker
+     E4:::clsWorker
+     Upd:::clsWorker
+     M2:::clsMaintain
+     M1:::clsMaintain
+     M3:::maintain
+     LR_Agent:::clsOrch
+     Term:::clsInfra
+     MO:::clsMain
+     DAG:::clsDB
+     RAG:::clsDB
     classDef clsMain fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10
     classDef clsOrch fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,stroke-dasharray: 4,rx:10
     classDef clsWorker fill:#ffffff,stroke:#e2e8f0,stroke-width:1px,rx:4
     classDef clsMaintain fill:#ecfdf5,stroke:#10b981,color:#064e3b,rx:4
     classDef clsInfra fill:#0f172a,color:#fff,stroke:#1e293b,rx:2
     classDef clsDB fill:#fff,stroke:#64748b,stroke-width:2px,shape:cylinder
-
-    %% Main Flow
-    User([User Goal]) --> MO[Main Orchestrator]:::clsMain
-
-    subgraph Engine ["DreamTeam Cruiser Engine"]
-        direction LR
-        MO <--> |"Dispatcher Switch"| LR_Agent{Left / Right Sub-Agents}:::clsOrch
-        
-        subgraph Context ["Isolated Agent Context"]
-            direction TB
-            LR_Agent --> Ops
-            
-            subgraph Ops ["Operational Phases"]
-                direction LR
-                subgraph PhaseP ["Planning"]
-                    direction TB
-                    P1[Planner]:::clsWorker --> P2[Sub-Planner]:::clsWorker
-                end
-
-                subgraph PhaseE ["Execution Loop"]
-                    direction TB
-                    E1[Developer]:::clsWorker --> E2[Reviewer]:::clsWorker
-                    E2 --> E3[DevExperience]:::clsWorker 
-                    E3 --> E4[Git-Ops]:::clsWorker
-                    E4 --> Upd[update-task Done]:::clsWorker
-                end
-
-                subgraph PhaseM ["Maintenance"]
-                    direction TB
-                    M1[Learning / Meta]:::clsMaintain --> M2[FixPlanner]:::clsMaintain
-                    M3[Researcher]:::maintain
-                end
-            end
-
-            %% Core Interface
-            Ops -.-> Term[[Terminal Subagent]]:::clsInfra
-        end
-
-        %% Persistence Layer
-        P2 & M2 --- DAG[(Task DAG)]:::clsDB
-        M3 --- RAG[(Memory DB / RAG)]:::clsDB
-    end
-
-    %% Switching Signals
-    Upd -.-> |"1. Batch Limit (15)\n2. Context Overflow"| MO
-    P2 -.-> |"3. Planning Done"| MO
-
-    %% Outer Styling
-    style Engine fill:#fdfaff,stroke:#c4b5fd,stroke-width:2px
+    style LR_Agent stroke:#00C853,fill:#FFD600
     style Context fill:#f8fafc,stroke:#e2e8f0,stroke-width:1px
+    style DAG stroke:#000000,fill:#FF6D00
+    style RAG fill:#FF6D00
+    style Counter fill:#FF6D00
+    style User fill:#00C853
+    style Engine fill:#fdfaff,stroke:#c4b5fd,stroke-width:2px
 ```
 
 ---
