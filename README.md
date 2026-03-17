@@ -169,7 +169,16 @@ Launch a minimalistic web dashboard to track your Cruiser's performance:
 ---
 
 ## License
-PolyForm Noncommercial 1.0.0 — personal, educational, and non-profit use only. See [LICENSE](LICENSE).
+
+**PolyForm Noncommercial 1.0.0** — for personal, educational, and non-profit use only.  
+See [LICENSE](LICENSE) for full details.
+
+### Author’s Engineering Pattern Notice
+
+The **dual orchestrator (Left/Right) execution with context resets—also referred to as the “ping-pong execution loop”)** is an original engineering pattern developed for DreamTeam.  
+
+While multi-agent orchestration as a concept exists, this specific pattern for **long-running LLM pipelines with context isolation** is the intellectual property of the authors.  
+Any commercial adaptation or replication of this exact pattern **without a separate license** is strictly prohibited.
 
 ---
 <p align="center">Crafted for Cursor adepts with love from <b>BuLab</b></p>
