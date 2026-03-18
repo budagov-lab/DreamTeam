@@ -18,7 +18,7 @@ Use `mcp_task` with the correct `subagent_type`:
 | Agent | subagent_type |
 |-------|--------------|
 | Developer | `developer` |
-| Reviewer | `code-reviewer` |
+| Reviewer | `reviewer` |
 | Git-Ops | `git-ops` |
 | Planner | `planner` |
 | Sub-Planner | `planner-sub` (Planner only, not Left/Right) |

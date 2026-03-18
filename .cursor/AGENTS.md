@@ -30,7 +30,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 **Trigger source:** All TRIGGER_* come from `update-task done` output. `task-counter` is diagnostics only — Left/Right do not re-process triggers from it.
 
 **How to dispatch:**
-- Use `mcp_task` with `subagent_type`: `developer`, `code-reviewer`, `planner`, `planner-sub`, `researcher`, `meta-planner`, `auditor`, `git-ops`, `shell` (Terminal), `orchestrator-left`, `orchestrator-right`, `dev-experiencer`, `learning`, `fix-planner`
+- Use `mcp_task` with `subagent_type`: `developer`, `reviewer`, `planner`, `planner-sub`, `researcher`, `meta-planner`, `auditor`, `git-ops`, `shell` (Terminal), `orchestrator-left`, `orchestrator-right`, `dev-experiencer`, `learning`, `fix-planner`
 - Git-Ops is the ONLY agent that does commits. Main Orchestrator runs NO Terminal — Left/Right do ALL Terminal work.
 - For Developer: include task ID, `.dreamteam/memory/architecture.md` snippet
 - For Reviewer: include changed files, task ID, architecture rules (Reviewer uses Terminal get-task for task content)

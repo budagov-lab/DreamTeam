@@ -136,6 +136,19 @@ DreamTeam uses a multi-layered intelligence system to ensure stability over long
 
 ---
 
+## Economy & Model Selection
+
+> [!IMPORTANT]
+> **Model Inheritance:** By default, all sub-agents inherit the model name chosen in the main chat (where `/start` or `/run` was invoked).
+
+To optimize project **economy**:
+*   **Heavy Reasoning** (Planner, Auditor, Researcher, Learning): We recommend using frontier models (e.g., Claude 4.6 Sonnet) for high architectural compliance.
+*   **Routine Tasks** (Developer, Reviewer, Git-Ops): These can often be shifted to more economical models to maintain sustainability over 500+ sequential tasks.
+
+Thoughtful model selection ensures the Project Budget lasts for the entire Cruiser journey.
+
+---
+
 ## Core Mechanisms
 
 ### Fault Tolerance — Nothing Gets Lost

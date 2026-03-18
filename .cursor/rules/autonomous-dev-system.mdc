@@ -74,9 +74,9 @@ Valid statuses: `todo`, `in_progress`, `done`, `blocked`, `deprecated`.
 Triggers are printed by `update-task done`. When multiple triggers fire simultaneously, process in this strict order:
 
 1. **TRIGGER_LEARNING** (every 10) → Learning → FixPlanner
-2. **TRIGGER_RESEARCHER** (every 20) → Researcher → memory-to-files → vector-index → check-memory
-3. **TRIGGER_META_PLANNER** (every 50) → Meta Planner → sync-tasks
-4. **TRIGGER_AUDITOR** (every 200) → Auditor → memory-to-files
+2. **TRIGGER_RESEARCHER** (every 20) → Researcher → `python -m dreamteam memory-to-files` → `python -m dreamteam vector-index` → `python -m dreamteam check-memory`
+3. **TRIGGER_META_PLANNER** (every 50) → Meta Planner → `python -m dreamteam sync-tasks`
+4. **TRIGGER_AUDITOR** (every 200) → Auditor → `python -m dreamteam memory-to-files`
 5. **TRIGGER_BATCH_SWITCH** (every 15) → Return BATCH_DONE immediately (after all other triggers above are handled)
 
 **Source of truth:** Triggers come from `update-task done` output. The `task-counter` command is read-only diagnostics — Left/Right do NOT re-process triggers from task-counter output at batch start.
