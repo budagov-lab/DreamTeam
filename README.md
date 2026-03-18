@@ -63,7 +63,7 @@ flowchart BT
         DP["Dispatcher"]
         Context
         DAG[("Task DAG")]
-        RAG[("Memory DB / RAG")]
+        RAG[("Memory DB")]
         Counter[("Counter")]
   end
     User(["User Goal"]) --> DP
