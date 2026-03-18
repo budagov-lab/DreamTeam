@@ -64,7 +64,7 @@ flowchart BT
  subgraph Context["Isolated Agent Context"]
     direction TB
         Ops
-        LR_Agent{"Left and Right Sub-Agents"}
+        LR_Agent{"Left and Right Orchestrator"}
         Term[["Terminal Subagent"]]
   end
  subgraph Engine["DreamTeam Cruiser Engine"]
