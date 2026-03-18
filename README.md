@@ -203,6 +203,7 @@ This approach enables controlled long-running LLM pipelines by:
 - preventing unbounded context accumulation;
 - enforcing deterministic execution segments;
 - isolating intermediate state across cycles.
+
 The specific combination of alternating orchestrators, dispatcher-mediated control flow, bounded task cycles, and systematic context resets constitutes a proprietary system design developed by the authors.
 Commercial use, reproduction, or adaptation of this architecture — including functionally equivalent systems that replicate its core execution principles — is prohibited without a separate commercial license.
 This restriction does not apply to personal, educational, or non-profit use, which is permitted under the PolyForm Noncommercial 1.0.0 license.
