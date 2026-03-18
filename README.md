@@ -115,6 +115,18 @@ flowchart BT
     style User fill:#00C853
     style Engine fill:#fdfaff,stroke:#c4b5fd,stroke-width:2px
 ```
+---
+
+## Economy & Model Selection
+
+> [!IMPORTANT]
+> **Model Inheritance:** By default, all sub-agents inherit the model name chosen in the main chat (where `/start` or `/run` was invoked).
+
+To optimize project **economy**:
+*   **Heavy Reasoning** (Planner, Auditor, Researcher, Learning): We recommend using frontier models (e.g., Claude 4.6 Sonnet) for high architectural compliance.
+*   **Routine Tasks** (Developer, Reviewer, Git-Ops): These can often be shifted to more economical models to maintain sustainability over 500+ sequential tasks.
+
+Thoughtful model selection ensures the Project Budget lasts for the entire Cruiser journey.
 
 ---
 
@@ -133,19 +145,6 @@ DreamTeam uses a multi-layered intelligence system to ensure stability over long
     *   **Reviewer**: Verifies code quality and architectural compliance.
     *   **Git-Ops**: Handles commits and repository maintenance.
     *   **Maintenance Agents**: (Researcher, Learning, Meta-Planner, Auditor) Keep the context compressed and the pipeline optimized.
-
----
-
-## Economy & Model Selection
-
-> [!IMPORTANT]
-> **Model Inheritance:** By default, all sub-agents inherit the model name chosen in the main chat (where `/start` or `/run` was invoked).
-
-To optimize project **economy**:
-*   **Heavy Reasoning** (Planner, Auditor, Researcher, Learning): We recommend using frontier models (e.g., Claude 4.6 Sonnet) for high architectural compliance.
-*   **Routine Tasks** (Developer, Reviewer, Git-Ops): These can often be shifted to more economical models to maintain sustainability over 500+ sequential tasks.
-
-Thoughtful model selection ensures the Project Budget lasts for the entire Cruiser journey.
 
 ---
 
