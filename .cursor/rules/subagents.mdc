@@ -29,8 +29,8 @@ Use `mcp_task` with the correct `subagent_type`:
 | FixPlanner | `fix-planner` |
 | DevExperiencer | `dev-experiencer` |
 | Terminal | `shell` |
-| Left | `orchestrator-left` (Main Orchestrator only) |
-| Right | `orchestrator-right` (Main Orchestrator only) |
+| Left | `orchestrator-left` (Dispatcher only) |
+| Right | `orchestrator-right` (Dispatcher only) |
 
 ## Left/Right Terminal Commands (Orchestration Only)
 

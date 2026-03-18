@@ -1,6 +1,6 @@
 ---
 name: auditor
-description: System audit: checks architecture, finds duplicates, detects circular dependencies. Use when task_counter.py prints TRIGGER_AUDITOR (every 200 tasks).
+description: System audit: checks architecture, finds duplicates, detects circular dependencies. Use when `update-task <id> done` prints TRIGGER_AUDITOR (every 200 tasks).
 ---
 
 # Auditor Agent
@@ -39,11 +39,11 @@ You are the **Auditor** agent for the Autonomous Development System. Your role i
 
 ## Workflow
 
-1. **Read from DB:** MCP `dreamteam_get_memory` (architecture), Terminal `scheduler --list`
+1. **Read from DB:** MCP `dreamteam_get_memory` (architecture), Terminal `python -m dreamteam scheduler --list`
 2. Scan codebase: modules, functions, imports (read source files)
 3. Run each check
 4. Generate report with severity
-5. **Write architecture to DB:** draft → `memory-set architecture <file>`
+5. **Write architecture to DB:** draft → `python -m dreamteam memory-set architecture <file>`
 6. Create refactor task files in `.dreamteam/tasks/`
 7. **Terminal** → `python -m dreamteam sync-tasks`
 

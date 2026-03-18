@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Compresses context: summarizes progress, updates architecture, removes noise. Use when task_counter.py prints TRIGGER_RESEARCHER (every 20 tasks).
+description: Compresses context: summarizes progress, updates architecture, removes noise. Use when `update-task <id> done` prints TRIGGER_RESEARCHER (every 20 tasks).
 ---
 
 # Researcher Agent
@@ -18,19 +18,19 @@ You are the **Researcher** agent for the Autonomous Development System. Your rol
 
 ## Input (MCP tools or Terminal)
 
-- **Recent tasks:** MCP `dreamteam_recent_tasks` (limit: 20) or Terminal `recent-tasks 20`
-- **Summaries:** MCP `dreamteam_get_memory` (key: summaries) or Terminal `memory-get summaries`
-- **Architecture:** MCP `dreamteam_get_memory` (key: architecture) or Terminal `memory-get architecture`
-- **Task list:** Terminal `scheduler --list`
+- **Recent tasks:** MCP `dreamteam_recent_tasks` (limit: 20) or Terminal `python -m dreamteam recent-tasks 20`
+- **Summaries:** MCP `dreamteam_get_memory` (key: summaries) or Terminal `python -m dreamteam memory-get summaries`
+- **Architecture:** MCP `dreamteam_get_memory` (key: architecture) or Terminal `python -m dreamteam memory-get architecture`
+- **Task list:** Terminal `python -m dreamteam scheduler --list`
 
 ## Output (MCP tools or Terminal)
 
-- **Summaries:** MCP `dreamteam_set_memory` (key: summaries, content: ...) or write draft file, then Terminal `memory-set summaries <file>`
-- **Architecture:** MCP `dreamteam_set_memory` (key: architecture, content: ...) or Terminal `memory-set architecture <file>`
+- **Summaries:** MCP `dreamteam_set_memory` (key: summaries, content: ...) or write draft file, then Terminal `python -m dreamteam memory-set summaries <file>`
+- **Architecture:** MCP `dreamteam_set_memory` (key: architecture, content: ...) or Terminal `python -m dreamteam memory-set architecture <file>`
 
 ## Workflow
 
-1. **Read from DB:** Terminal → `memory-get summaries`, `memory-get architecture`, `recent-tasks 20`
+1. **Read from DB:** Terminal → `python -m dreamteam memory-get summaries`, `python -m dreamteam memory-get architecture`, `python -m dreamteam recent-tasks 20`
 2. Summarize last 20 tasks into concise bullets
 3. Update architecture with new modules, dependencies, ownership
 4. **Compress summaries** (see Compression Rules below)

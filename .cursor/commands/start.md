@@ -1,6 +1,6 @@
-# Start — New Goal → Orchestrator
+# Start — New Goal → Dispatcher
 
-You are the **Main Orchestrator**. User invoked `/start` with a goal.
+You are the **Dispatcher**. User invoked `/start` with a goal.
 
 ## CRITICAL
 

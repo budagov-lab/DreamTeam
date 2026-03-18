@@ -4,15 +4,15 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 ## Subagents (Dispatch via mcp_task)
 
-**Full details:** `.cursor/agents/orchestrator.md`
+**Full details:** `.cursor/agents/dispatcher.md`
 
-**Main Orchestrator** (when /start or /run): ONLY dispatches **Left** or **Right**. Does NOT dispatch Developer, Planner, Reviewer, etc. — Left and Right do that.
+**Dispatcher** (when /start or /run): ONLY dispatches **Left** or **Right**. Does NOT dispatch Developer, Planner, Reviewer, etc. — Left and Right do that.
 
 **Left/Right** dispatch: Planner, Developer, Reviewer, DevExperiencer, Git-Ops, Learning, FixPlanner, Researcher, Meta Planner, Auditor, Terminal.
 
 **When to dispatch:**
-- **Left** — Main Orchestrator dispatches (orchestrator-left). Left runs up to 33 tasks per batch (planning or execution). Project can have thousands of tasks.
-- **Right** — Main Orchestrator dispatches (orchestrator-right). Right runs up to 33 tasks per batch.
+- **Left** — Dispatcher dispatches (orchestrator-left). Left runs up to 33 tasks per batch (planning or execution). Project can have thousands of tasks.
+- **Right** — Dispatcher dispatches (orchestrator-right). Right runs up to 33 tasks per batch.
 - **Planner** — Left/Right dispatch (planner). Planner breaks into epics, dispatches Sub-Planner.
 - **Planner-Sub** — Planner dispatches (planner-sub), not Orchestrator
 - **DevExperiencer** — Left/Right dispatch after Reviewer (dev-experiencer)
@@ -31,11 +31,11 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 **How to dispatch:**
 - Use `mcp_task` with `subagent_type`: `developer`, `reviewer`, `planner`, `planner-sub`, `researcher`, `meta-planner`, `auditor`, `git-ops`, `shell` (Terminal), `orchestrator-left`, `orchestrator-right`, `dev-experiencer`, `learning`, `fix-planner`
-- Git-Ops is the ONLY agent that does commits. Main Orchestrator runs NO Terminal — Left/Right do ALL Terminal work.
+- Git-Ops is the ONLY agent that does commits. Dispatcher runs NO Terminal — Left/Right do ALL Terminal work.
 - For Developer: include task ID, `.dreamteam/memory/architecture.md` snippet
 - For Reviewer: include changed files, task ID, architecture rules (Reviewer uses Terminal get-task for task content)
 
-**Main Orchestrator workflow:** verify-tasks → set-goal → Dispatch Left → (Left returns BATCH_DONE) → Dispatch Right → alternate until ALL_COMPLETE.
+**Dispatcher workflow:** verify-tasks → set-goal → Dispatch Left → (Left returns BATCH_DONE) → Dispatch Right → alternate until ALL_COMPLETE.
 
 **Left/Right workflow:** run-next → Developer → Reviewer → DevExperiencer (pass: task_id, result, attempts) → Git-Ops → update-task done → process TRIGGER_* in order: Learning → Researcher (+memory-to-files) → Meta Planner (+sync-tasks) → Auditor (+memory-to-files) → BATCH_SWITCH → run-next.
 
@@ -43,7 +43,7 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 
 | Role | Prompt File | When to Use |
 |------|-------------|-------------|
-| Orchestrator | `.cursor/agents/orchestrator.md` | ONLY dispatches Left/Right. Left/Right do all subagent orchestration. |
+| Dispatcher | `.cursor/agents/dispatcher.md` | ONLY dispatches Left/Right. Left/Right do all subagent orchestration. |
 | Left | `.cursor/agents/orchestrator-left.md` | Sub-orchestrator, up to 33 tasks per batch (context switch; project can have thousands) |
 | Right | `.cursor/agents/orchestrator-right.md` | Sub-orchestrator, up to 33 tasks per batch |
 | Planner | `.cursor/agents/planner.md` | New goal, epic, or task decomposition |
@@ -79,7 +79,7 @@ Project skills in `.cursor/skills/`:
 
 - `.cursor/rules/autonomous-dev-system.mdc` — Always apply
 - `.cursor/rules/task-execution.mdc` — When editing `.dreamteam/tasks/**/*.md`
-- `.cursor/agents/orchestrator.md` — Main Orchestrator: only Left/Right. Load when /start or /run.
+- `.cursor/agents/dispatcher.md` — Dispatcher: only Left/Right. Load when /start or /run.
 
 ## Commands
 

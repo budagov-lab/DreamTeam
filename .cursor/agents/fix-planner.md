@@ -39,7 +39,7 @@ Learning MUST provide (and you act ONLY on what is provided):
 
 ## Workflow
 
-1. **Terminal** → `memory-get goal` — read original strategy
+1. **Terminal** → `python -m dreamteam memory-get goal` — read original strategy
 2. **If cyclic_failure_id** — process that task first (read file, apply fix, check dependents)
 3. **For each task in target_ids** (up to 10 total):
    - Read task file from `.dreamteam/tasks/`

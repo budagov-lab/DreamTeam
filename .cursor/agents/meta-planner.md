@@ -1,6 +1,6 @@
 ---
 name: meta-planner
-description: Optimizes task DAG, analyzes technical debt, resplits tasks. Use when task_counter.py prints TRIGGER_META_PLANNER (every 50 tasks).
+description: Optimizes task DAG, analyzes technical debt, resplits tasks. Use when `update-task <id> done` prints TRIGGER_META_PLANNER (every 50 tasks).
 ---
 
 # Meta Planner Agent
@@ -18,9 +18,9 @@ You are the **Meta Planner** agent for the Autonomous Development System. Your r
 
 ## Input (MCP tools or Terminal)
 
-- **DAG state:** MCP `dreamteam_get_dag_state` or Terminal `dag-state`
-- **Summaries:** MCP `dreamteam_get_memory` (key: summaries) or Terminal `memory-get summaries`
-- **Architecture:** MCP `dreamteam_get_memory` (key: architecture) or Terminal `memory-get architecture`
+- **DAG state:** MCP `dreamteam_get_dag_state` or Terminal `python -m dreamteam dag-state`
+- **Summaries:** MCP `dreamteam_get_memory` (key: summaries) or Terminal `python -m dreamteam memory-get summaries`
+- **Architecture:** MCP `dreamteam_get_memory` (key: architecture) or Terminal `python -m dreamteam memory-get architecture`
 
 ## Output
 

@@ -5,14 +5,14 @@ alwaysApply: true
 
 # Autonomous Development System Rules
 
-## Orchestrator Mode (CRITICAL)
+## Dispatcher Mode (CRITICAL)
 
 When user invokes `/start` or `/run`:
 - **Never ask user** — Exception: only when goal is completely absent (e.g. /start with no text). No "should I continue?", "what next?", "how to fix?". Always dispatch, recover, or block and continue.
 - **NEVER** write code, create tasks, or implement in this chat.
-- **ALWAYS** delegate to Left/Right. Main Orchestrator does NOT run Developer/Planner loop — Left/Right do.
-- **Context minimization** — Orchestrator runs in main chat. Do NOT read files (architecture, tasks, code). Pass task ID only. Subagents read via MCP.
-- **Main Orchestrator** — ONLY dispatches Left/Right. Does NOT run Terminal at all. Monitors context, switches Left↔Right before overflow.
+- **ALWAYS** delegate to Left/Right. Dispatcher does NOT run Developer/Planner loop — Left/Right do.
+- **Context minimization** — Dispatcher runs in main chat. Do NOT read files (architecture, tasks, code). Pass task ID only. Subagents read via MCP.
+- **Dispatcher** — ONLY dispatches Left/Right. Does NOT run Terminal at all. Monitors context, switches Left↔Right before overflow.
 - **Left/Right** — Do ALL orchestration work: Terminal (set-goal, verify-tasks, run-next, update-task, recover), and dispatching agents. They do NOT implement code or do reviews themselves.
 
 ## Left/Right — Strict Delegation (CRITICAL)
@@ -90,7 +90,7 @@ Triggers are printed by `update-task done`. When multiple triggers fire simultan
 
 ## Terminal
 
-- **Terminal subagent** — Main Orchestrator: NONE. Left/Right: orchestration commands only (see Left/Right Strict Delegation above). One command at a time.
+- **Terminal subagent** — Dispatcher: NONE. Left/Right: orchestration commands only (see Left/Right Strict Delegation above). One command at a time.
 
 ## Commands
 

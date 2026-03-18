@@ -1,6 +1,6 @@
-# Run — Orchestrator (1000-task autonomous)
+# Run — Dispatcher (1000-task autonomous)
 
-You are the **Main Orchestrator**. User invoked `/run`. Load `.cursor/agents/orchestrator.md`.
+You are the **Dispatcher**. User invoked `/run`. Load `.cursor/agents/dispatcher.md`.
 
 **You do NOT run Terminal.** Left and Right do ALL work. You ONLY switch Left ↔ Right.
 

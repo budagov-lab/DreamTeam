@@ -59,7 +59,7 @@ Use `python -m dreamteam <command>` (or `dreamteam` if in PATH).
 | dreamteam sync-tasks | Sync tasks to DB |
 | dreamteam verify-tasks | Verify consistency |
 | dreamteam update-task <id> <status> | Update task |
-| dreamteam task-counter | Increment, check triggers |
+| dreamteam task-counter | Show progress (tasks_completed / total, next triggers) |
 | dreamteam recover | Recovery |
 | dreamteam check-memory | Validate memory |
 | dreamteam current-project | Show project root |
