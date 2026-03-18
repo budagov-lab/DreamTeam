@@ -3,10 +3,10 @@
 [![License: PolyForm](https://img.shields.io/badge/License-PolyForm_Noncommercial-blue.svg)](LICENSE)
 [![System: Cursor](https://img.shields.io/badge/Designed_for-Cursor-00AEEF.svg)](https://cursor.sh)
 
-A long-range **Autonomous Development Cruiser for Cursor** capable of executing **500–1000+ sequential tasks** without quality degradation. Built for fault tolerance, continuous learning, and multi-layered agent orchestration using **ping-pong execution loop**.
+A long-range **Autonomous Development Cruiser for Cursor** capable of executing **500+ sequential tasks** without quality degradation. Built for fault tolerance, continuous learning, and multi-layered agent orchestration using **ping-pong execution loop**.
 
 > [!IMPORTANT]
-> **Dispatcher Architecture:** DreamTeam is designed to offload deep work from the main chat. The **Dispatcher** coordinates **Left and Right Orchestrators** to run batches of 15+ tasks with minimal supervision. Each context switch (ping-pong) performs a context reset, ensuring the dispatcher never hits context ceilings. This is the key to executing **1000+ tasks** with zero performance degradation.
+> **Dispatcher Architecture:** DreamTeam is designed to offload deep work from the main chat. The **Dispatcher** coordinates **Left and Right Orchestrators** to run batches of 15+ tasks with minimal supervision. Each context switch (ping-pong) performs a context reset, ensuring the dispatcher never hits context ceilings. This is the key to executing **500+ tasks** with zero performance degradation.
 
 **Quick Start:**
 1. `python -m dreamteam new-project .` (in an empty folder)
@@ -197,10 +197,16 @@ See [LICENSE](LICENSE) for full details.
 
 ### Author’s Engineering Pattern Notice
 
-The **dual orchestrator (Left/Right) execution with context resets—also referred to as the “ping-pong execution loop”)** is an original engineering pattern developed for DreamTeam.  
-
-While multi-agent orchestration as a concept exists, this specific pattern for **long-running LLM pipelines with context isolation** is the intellectual property of the authors.  
-Any commercial adaptation or replication of this exact pattern **without a separate license** is strictly prohibited.
+The dual-orchestrator dispatch model (also referred to as the “ping-pong execution loop” with context resets) is an original engineering approach developed as part of the DreamTeam system.
+Unlike conventional multi-agent orchestration, where coordination occurs within a single persistent context, this pattern is based on externalized dispatching between two alternating orchestrators, each operating within an isolated execution context and explicitly reset after completing a bounded sequence of tasks (N-step execution cycle).
+This approach enables controlled long-running LLM pipelines by:
+- preventing unbounded context accumulation;
+- enforcing deterministic execution segments;
+- isolating intermediate state across cycles.
+The specific combination of alternating orchestrators, dispatcher-mediated control flow, bounded task cycles, and systematic context resets constitutes a proprietary system design developed by the authors.
+Commercial use, reproduction, or adaptation of this architecture — including functionally equivalent systems that replicate its core execution principles — is prohibited without a separate commercial license.
+This restriction does not apply to personal, educational, or non-profit use, which is permitted under the PolyForm Noncommercial 1.0.0 license.
+This notice applies to the dispatching model, execution cycle structure, and context management methodology as embodied in this project and its associated materials.
 
 ---
 <p align="center">Crafted for Cursor adepts with love from <b>BuLab</b></p>
