@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-step orchestrator: verify, get next task, print instructions. Run this to start each task round."""
+"""One-step dispatcher: verify, get next task, print instructions. Run this to start each task round."""
 
 import os
 import sys
@@ -148,7 +148,7 @@ def main() -> None:
     print(f"NEXT TASK: {task_id}  ({completed + 1} of {total})")
     print("=" * 60)
     print()
-    print("1. Orchestrator: Dispatch Developer with task ID. Developer uses MCP dreamteam_get_task or Terminal get-task " + task_id)
+    print("1. Dispatcher: Deploy specialized Orchestrator with task ID. Orchestrator uses MCP dreamteam_get_task or Terminal get-task " + task_id)
     print("2. After Reviewer approval: Launch Git-Ops subagent (task ID + short title). Git-Ops does commit.")
     print("3. Then run (update-task done auto-increments counter and emits TRIGGER_*):")
     print()
@@ -159,7 +159,7 @@ def main() -> None:
     print("5. If update-task prints TRIGGER_RESEARCHER:")
     print("   Researcher agent -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
     print()
-    print("6. Left/Right auto-checkpoint every 15 tasks per batch (context switch; project can have thousands of tasks)")
+    print("6. Dispatcher auto-checkpoint every 15 tasks per batch (context switch; project can have thousands of tasks)")
     print("=" * 60)
 
 

@@ -40,7 +40,7 @@ The Autonomous Development System enables **500–1000+ sequential tasks** witho
 |-------|---------|----------------|
 | **Planner** | On new goal | Break into epics, dispatch Sub-Planner per epic, create task DAG |
 | **Planner-Sub** | Dispatched by Planner per epic | Expand one epic into 15–25 subtasks |
-| **Developer** | Scheduler assigns | Write code, run tests, fix errors, update task status |
+| **Developer** | Scheduler assigns | Write code, run tests, fix errors, deliver code to Reviewer |
 | **Reviewer** | After each task | Review code quality, suggest fixes |
 | **DevExperiencer** | After each Reviewer | Record task experience to DevExperience DB (for Learning loop) |
 | **Git-Ops** | After DevExperiencer (if approved) | Add, commit, push (ONLY agent that commits) |
@@ -78,4 +78,4 @@ The Autonomous Development System enables **500–1000+ sequential tasks** witho
 2. **Update task status** via `python -m dreamteam update-task` (updates both file and DB).
 3. **Respect code ownership** — check `.dreamteam/memory/architecture.md` for module owners.
 4. **Run tests** before marking a task as done.
-5. **No parallelism** — One task, one subagent at a time. Main Orchestrator dispatches Left/Right only.
+5. **No parallelism** — One task, one subagent at a time. Dispatcher coordinates Left/Right Orchestrators only.

@@ -55,9 +55,9 @@ your-project/
   src/           — your code
 ```
 
-## 500+ Tasks: Main Orchestrator + Left/Right
+## 500+ Tasks: Dispatcher + Left/Right Orchestrators
 
-For large projects (thousands of tasks), use `/run` — Main Orchestrator dispatches Left/Right Sub-orchestrators in batches of 15 (batch = context switch). Planning: Left/Right dispatch Planner; Planner expands ALL epics via Sub-Planner (no task limit). Execution: Developer → Reviewer → DevExperiencer → Git-Ops loop. Alternate Left ↔ Right until ALL_COMPLETE.
+For large projects (thousands of tasks), use `/run` — Dispatcher coordinates Left/Right Orchestrators in batches of 15 (batch = context switch). Planning: Orchestrators dispatch Planner; Planner expands ALL epics via Sub-Planner (no task limit). Execution: Developer → Reviewer → DevExperiencer → Git-Ops loop. Alternate Left ↔ Right until ALL_COMPLETE.
 
 ## Under the Hood: What the Autonomous Agent Has Inside
 
@@ -89,14 +89,14 @@ The system is built for **self-sustaining execution** over 500–1000+ tasks. Th
 | 50            | Meta Planner| Optimize DAG, resplit tasks, tech debt       |
 | 200           | Auditor     | Architecture audit, duplicates, dependencies|
 
-**Trigger flow:** `update-task <id> done` increments `tasks_completed` and prints `TRIGGER_*` when count is divisible. Left/Right dispatch the corresponding agent (Learning, Researcher, Meta Planner, Auditor). No manual checkpoint.
+**Trigger flow:** `update-task <id> done` increments `tasks_completed` and prints `TRIGGER_*` when count is divisible. Orchestrators dispatch the corresponding agent (Learning, Researcher, Meta Planner, Auditor). No manual checkpoint.
 
-**Effect:** Context stays compressed, DAG stays optimized, architecture stays coherent. The chain never breaks; Left/Right always know the next step.
+**Effect:** Context stays compressed, DAG stays optimized, architecture stays coherent. The chain never breaks; Orchestrators always know the next step.
 
 ### Flow Continuity (Nothing Drops)
 
 - **run-next** — Auto-runs `sync-tasks` if verify fails; fixes `tasks_completed` drift; always returns next task or "All tasks complete".
-- **update-task done** — Increments counter, prints `TRIGGER_*` when divisible. Left/Right react immediately.
+- **update-task done** — Increments counter, prints `TRIGGER_*` when divisible. Orchestrators react immediately.
 - **recover** — Syncs tasks, fixes drift, resets stuck (>60 min in_progress), verifies integrity. Use after crash or mismatch.
 - **Strict sequence** — Developer → Reviewer → DevExperiencer → Git-Ops → update-task → run-next. No parallel agents; one command at a time.
 

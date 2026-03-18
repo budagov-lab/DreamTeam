@@ -50,9 +50,12 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
         print("Database not found. Run: dreamteam init-db", file=sys.stderr)
         return False
 
-    conn = sqlite3.connect(DB_PATH, timeout=10.0)
+    conn = sqlite3.connect(DB_PATH, timeout=60.0)
     try:
         cursor = conn.cursor()
+        # For multi-process Windows tests, DELETE mode is more durable than WAL on fast deletions/recreations
+        cursor.execute("PRAGMA journal_mode=DELETE")
+        cursor.execute("PRAGMA synchronous=FULL")
         now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
         if status == "in_progress":
@@ -69,27 +72,32 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
         else:
             if owner is not None:
                 cursor.execute(
-                    "UPDATE tasks SET status = ?, owner = ?, updated_at = ? WHERE id = ?",
+                    "UPDATE tasks SET status = ?, owner = ?, updated_at = ? WHERE UPPER(id) = UPPER(?)",
                     (status, owner, now, task_id),
                 )
             else:
                 cursor.execute(
-                    "UPDATE tasks SET status = ?, updated_at = ? WHERE id = ?",
+                    "UPDATE tasks SET status = ?, updated_at = ? WHERE UPPER(id) = UPPER(?)",
                     (status, now, task_id),
                 )
         affected = cursor.rowcount
         if affected > 0:
+            # Commit and flush WAL to disk explicitly for SQLite-over-process durability on Windows
+            conn.commit()
+            
             if status == "done":
                 cursor.execute(
-                    "UPDATE metrics SET value = value + 1 WHERE metric = 'tasks_completed'"
+                    "INSERT OR REPLACE INTO metrics (metric, value) VALUES ('tasks_completed', (SELECT COUNT(*) FROM tasks WHERE status = 'done'))"
                 )
+                conn.commit()
             elif status == "deprecated":
                 cursor.execute(
-                    "UPDATE metrics SET value = (SELECT COUNT(*) FROM tasks WHERE status = 'done') WHERE metric = 'tasks_completed'"
+                    "INSERT OR REPLACE INTO metrics (metric, value) VALUES ('tasks_completed', (SELECT COUNT(*) FROM tasks WHERE status = 'done'))"
                 )
+                conn.commit()
         if affected > 0 and status == "done":
             try:
-                cursor.execute("SELECT started_at FROM tasks WHERE id = ?", (task_id,))
+                cursor.execute("SELECT started_at FROM tasks WHERE UPPER(id) = UPPER(?)", (task_id,))
                 row_start = cursor.fetchone()
                 minutes = 0
                 if row_start and row_start[0]:
@@ -108,18 +116,20 @@ def update_status(task_id: str, status: str, owner: str | None = None, sync_file
             cursor.execute("SELECT value FROM metrics WHERE metric = 'tasks_completed'")
             row = cursor.fetchone()
             count = row[0] if row else 0
+            
             if count % TRIGGER_RESEARCHER == 0 and count > 0:
-                print("TRIGGER_RESEARCHER")
+                print("TRIGGER_RESEARCHER", flush=True)
             if count % TRIGGER_META_PLANNER == 0 and count > 0:
-                print("TRIGGER_META_PLANNER")
+                print("TRIGGER_META_PLANNER", flush=True)
             if count % TRIGGER_AUDITOR == 0 and count > 0:
-                print("TRIGGER_AUDITOR")
+                print("TRIGGER_AUDITOR", flush=True)
             if count % TRIGGER_LEARNING == 0 and count > 0:
-                print("TRIGGER_LEARNING")
+                print("TRIGGER_LEARNING", flush=True)
             if count % TRIGGER_BATCH_SWITCH == 0 and count > 0:
-                print("TRIGGER_BATCH_SWITCH")
+                print("TRIGGER_BATCH_SWITCH", flush=True)
             print(f"tasks_completed: {count}")
 
+        # Final commit and ensure flush
         conn.commit()
     finally:
         conn.close()

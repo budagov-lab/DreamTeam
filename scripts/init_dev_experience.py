@@ -35,6 +35,21 @@ def init_dev_experience() -> None:
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_task_experience_created ON task_experience(created_at)"
         )
+        
+        # Migration: add missing columns if already exists
+        cols = (
+            ("time_spent_minutes", "INTEGER"),
+            ("attempts_count", "INTEGER DEFAULT 1"),
+            ("technologies_used", "TEXT"),
+            ("approaches_used", "TEXT"),
+            ("critical_feedback", "TEXT"),
+            ("tokens_estimated", "INTEGER"),
+        )
+        for col, col_type in cols:
+            try:
+                cursor.execute(f"ALTER TABLE task_experience ADD COLUMN {col} {col_type}")
+            except sqlite3.OperationalError:
+                pass  # Already exists
 
         conn.commit()
     finally:

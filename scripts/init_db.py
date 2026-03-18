@@ -16,8 +16,8 @@ def init_db(reset: bool = False) -> None:
     conn = sqlite3.connect(DB_PATH, timeout=10.0)
     try:
         cursor = conn.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL;")
-        cursor.execute("PRAGMA synchronous=NORMAL;")
+        cursor.execute("PRAGMA journal_mode=DELETE;")
+        cursor.execute("PRAGMA synchronous=FULL;")
 
         if reset:
             cursor.execute("DROP TABLE IF EXISTS tasks")
@@ -87,6 +87,13 @@ def init_db(reset: bool = False) -> None:
         cursor.execute(
             "INSERT OR IGNORE INTO metrics (metric, value) VALUES ('tasks_completed', 0)"
         )
+        cursor.execute(
+            "INSERT OR IGNORE INTO metrics (metric, value) VALUES ('total_tokens', 0)"
+        )
+        cursor.execute(
+            "INSERT OR IGNORE INTO metrics (metric, value) VALUES ('total_cost', 0)"
+        )
+        conn.commit()
 
         # DevExperience DB (separate file)
         try:

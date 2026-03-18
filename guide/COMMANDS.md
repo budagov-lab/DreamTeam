@@ -44,7 +44,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 |---------|-------------|
 | `dreamteam task-counter` | Show tasks_completed / total, next TRIGGER_* |
 
-**Triggers:** TRIGGER_LEARNING (10), TRIGGER_RESEARCHER (20), TRIGGER_META_PLANNER (50), TRIGGER_AUDITOR (200), TRIGGER_BATCH_SWITCH (15) — Left/Right return BATCH_DONE to switch before context overflow
+**Triggers:** TRIGGER_LEARNING (10), TRIGGER_RESEARCHER (20), TRIGGER_META_PLANNER (50), TRIGGER_AUDITOR (200), TRIGGER_BATCH_SWITCH (15) — Orchestrators return BATCH_DONE to Dispatcher to switch before context overflow
 
 ## Memory (DB — Researcher/Auditor use only)
 
@@ -59,7 +59,7 @@ Project root: 1) DREAMTEAM_PROJECT env 2) .dreamteam in cwd/parents 3) DreamTeam
 
 **MCP dreamteam-db** — Use tools dreamteam_get_task, dreamteam_get_memory, dreamteam_set_memory, dreamteam_get_dag_state, dreamteam_recent_tasks instead of Terminal when available.
 
-**Researcher, Meta Planner, Auditor** read/write memory via MCP or Terminal. Left/Right run `memory-to-files` after Researcher.
+**Researcher, Meta Planner, Auditor** read/write memory via MCP or Terminal. Orchestrators run `memory-to-files` after Researcher.
 
 ## Learning Loop (DevExperience)
 
@@ -117,4 +117,4 @@ python -m dreamteam run-next
 
 **Default: sequential.** One task, one subagent at a time. No parallel terminals.
 
-For large projects (thousands of tasks): use `/run` — Main Orchestrator dispatches Left/Right Sub-orchestrators in batches of 15 (batch = context switch, not project limit).
+For large projects (thousands of tasks): use `/run` — Dispatcher coordinates Left/Right Orchestrators in batches of 15 (batch = context switch, not project limit).

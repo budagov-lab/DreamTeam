@@ -6,7 +6,7 @@
 A long-range **Autonomous Development Cruiser for Cursor** capable of executing **500–1000+ sequential tasks** without quality degradation. Built for fault tolerance, continuous learning, and multi-layered agent orchestration using **ping-pong execution loop**.
 
 > [!IMPORTANT]
-> **Orchestration Zero:** DreamTeam is designed to offload work from the main chat. It dispatches **Left and Right Sub-Orchestrators** to run batches of 15+ tasks with minimal supervision. The execution follows a ping-pong pattern — after each switch, the context is reset to keep the main orchestrator lean and stable.
+> **Dispatcher Architecture:** DreamTeam is designed to offload deep work from the main chat. The **Dispatcher** coordinates **Left and Right Orchestrators** to run batches of 15+ tasks with minimal supervision. Each context switch (ping-pong) performs a context reset, ensuring the dispatcher never hits context ceilings. This is the key to executing **1000+ tasks** with zero performance degradation.
 
 **Quick Start:**
 1. `python -m dreamteam new-project .` (in an empty folder)
@@ -15,9 +15,18 @@ A long-range **Autonomous Development Cruiser for Cursor** capable of executing 
 
 ---
 
+## AI Hierarchy: Strategic Isolation
+
+To maintain stability across hundreds of tasks, DreamTeam implements a two-layer hierarchy:
+
+1. **Dispatcher (Strategic Layer):** Lives in the main chat. Its **only** job is to monitor the goal and flip control between Left and Right Orchestrators. It stays lean, never running terminal commands or seeing low-level code.
+2. **Orchestrators (Operative Layer):** Specialized subagents (**orchestrator-left** and **orchestrator-right**) that handle batches of ~15 tasks. They run the full execution loop (Developer → Reviewer → etc.) and manage the database.
+
+This **"Strategic Isolation"** ensures that even if an execution batch becomes context-heavy, the Dispatcher remains a stable, high-level coordinator.
+
 ## Pipeline: High-Performance Autonomy
 
-The system uses a recursive orchestration loop. The **Main Orchestrator** dispatches specialized sub-orchestrators to handle batches of tasks, keeping the main context clean and stable.
+The system uses a recursive dispatching loop. The **Dispatcher** coordinates specialized orchestrators to handle batches of tasks, keeping the main context clean and stable.
 
 ```mermaid
 ---
@@ -60,14 +69,14 @@ flowchart BT
   end
  subgraph Engine["DreamTeam Cruiser Engine"]
     direction LR
-        MO["Main Orchestrator"]
+        DP["Dispatcher"]
         Context
         DAG[("Task DAG")]
         RAG[("Memory DB / RAG")]
         Counter[("Counter")]
   end
-    User(["User Goal"]) --> MO
-    MO -- Dispatcher Switch --> LR_Agent
+    User(["User Goal"]) --> DP
+    DP -- Switch batch --> LR_Agent
     LR_Agent --> Ops
     P1 --> P2
     E1 --> E2
@@ -80,8 +89,8 @@ flowchart BT
     M2 --- DAG
     M3 --- RAG
     Upd -. "Batch Limit =15 or
-    Context Overflow" .-> MO
-    P2 -. Planning Done .-> MO
+    Context Overflow" .-> DP
+    P2 -. Planning Done .-> DP
     M4 --> RAG
     Counter --> M4 & M3 & M1
     DAG --> M4 & M3
@@ -98,7 +107,7 @@ flowchart BT
      M3:::maintain
      LR_Agent:::clsOrch
      Term:::clsInfra
-     MO:::clsMain
+     DP:::clsMain
      DAG:::clsDB
      RAG:::clsDB
     classDef clsMain fill:#4f46e5,color:#fff,stroke:#3730a3,stroke-width:2px,rx:10
@@ -120,13 +129,13 @@ flowchart BT
 
 ## Under the Hood: Scalable Autonomy
 
-The system is built to minimize "Main Chat" context overflow. Using a **Dual Sub-Orchestrator system (Left/Right)**, DreamTeam offloads execution to sub-agents, leaving the main chat lean and responsive. This architectural split allows massive task sequences to run even on non-frontier models.
+The system is built to minimize "Main Chat" context overflow. Using a **Dual Orchestrator system (Left/Right)**, DreamTeam offloads execution to sub-agents, leaving the main chat lean and responsive. This architectural split allows massive task sequences to run even on non-frontier models.
 ## AI Sub-Agent Hierarchy
 
 DreamTeam uses a multi-layered intelligence system to ensure stability over long durations:
 
-1.  **Level 1: Cruiser Control (Main Orchestrator)**: The entry point. It doesn't perform tasks but manages the switching between "Left" and "Right" sub-orchestrators. This ensures that even for 1000-task journeys, the main chat context remains lean and responsive.
-2.  **Level 2: Mission Dispatch (Sub-Orchestrators)**: Specialized dispatchers that run inside a fresh context. They decide whether to launch the **Planning Phase** or the **Execution Loop** and handle all self-correction triggers.
+1.  **Level 1: Fleet Control (Dispatcher)**: The entry point. It doesn't perform tasks but manages the switching between "Left" and "Right" Orchestrators. This ensures that even for 1000-task journeys, the main chat context remains lean and responsive.
+2.  **Level 2: Task Orchestration (Orchestrators)**: Specialized agents that run inside a fresh context. They decide whether to launch the **Planning Phase** or the **Execution Loop** and handle all self-correction triggers.
 3.  **Level 3: Specialized Workers**: 
     *   **Planner & Sub-Planner**: Decompose high-level goals into a detailed task DAG.
     *   **Developer**: Implements features and runs tests.
