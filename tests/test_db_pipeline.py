@@ -141,3 +141,22 @@ def test_run_next_full_flow(temp_project):
     r = _run([os.path.join(SCRIPTS, "run_next.py")], cwd=root, env=env)
     assert r.returncode == 0
     assert "NEXT TASK: T002" in r.stdout
+
+
+def test_run_next_no_ready_tasks_is_not_complete(temp_project):
+    """If no todo task is ready, run-next must not claim all tasks are complete."""
+    root = str(temp_project)
+    env = {"DREAMTEAM_PROJECT": root}
+
+    _run([os.path.join(SCRIPTS, "init_db.py")], cwd=root, env=env)
+    _run([os.path.join(SCRIPTS, "sync_tasks.py")], cwd=root, env=env)
+
+    # Create a "no ready task" state:
+    # - T001 blocked (not done)
+    # - T002, T003 still todo and depend on unfinished tasks
+    _run([os.path.join(SCRIPTS, "update_task.py"), "T001", "blocked"], cwd=root, env=env)
+
+    r = _run([os.path.join(SCRIPTS, "run_next.py")], cwd=root, env=env)
+    assert r.returncode == 0
+    assert "All tasks complete." not in r.stdout
+    assert "No ready tasks. Pending tasks remain." in r.stdout

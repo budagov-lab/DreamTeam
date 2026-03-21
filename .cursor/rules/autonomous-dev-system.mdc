@@ -24,7 +24,7 @@ Left and Right are **dispatchers only**. They NEVER:
 - Read source code files to implement anything
 
 Left/Right ONLY run Terminal subagent for these orchestration commands:
-`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`
+`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`, `subagent-calls`
 
 Everything else is delegated to the appropriate agent:
 - **Code implementation** → Developer (mcp_task)
@@ -38,7 +38,7 @@ If Left/Right find themselves writing code or running pytest/git — they are do
 ## Task Execution
 
 - Before editing code, check `.dreamteam/memory/architecture.md` for module ownership and dependencies.
-- Update task status in both the task file (`.dreamteam/tasks/task_XXX.md`) and the database after completion.
+- Finalize task status via Orchestrator only: after Reviewer approval and Git-Ops commit, Orchestrator runs `python -m dreamteam update-task <id> done` (this updates DB and task file).
 - Run tests before marking a task as `done`.
 - Never mark a task done if dependencies are not fully completed.
 
@@ -87,6 +87,7 @@ Triggers are printed by `update-task done`. When multiple triggers fire simultan
 - **NO parallel subagents** — One subagent at a time. Do NOT launch Planner + Developer, or multiple Developers, in parallel.
 - **NO parallel terminals** — One terminal command at a time. Wait for completion before next command.
 - Strictly sequential: Planner → Developer → Reviewer → Git-Ops (commit) → Orchestrator: update-task, run-next.
+- **Completion barrier** — Left/Right MUST NOT return BATCH_DONE/ALL_COMPLETE while any dispatched subagent call is still unfinished.
 
 ## Terminal
 

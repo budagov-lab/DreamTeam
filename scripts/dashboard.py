@@ -108,6 +108,34 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             margin-bottom: 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
+        .batch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .batch-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .batch-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+        .batch-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 13px;
+        }
+        .batch-item:last-child { border-bottom: none; }
+        .batch-key { color: var(--text-muted); }
+        .batch-val { font-weight: 500; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -172,6 +200,22 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     <div class="kpi-value" id="kpi-friction">0.0</div>
                     <div class="kpi-label">Avg Attempts (Friction)</div>
                 </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-calls-total">0</div>
+                    <div class="kpi-label">Subagent Calls (Total)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-calls-open">0</div>
+                    <div class="kpi-label">Open Calls</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-active-batches">0</div>
+                    <div class="kpi-label">Active Batches</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-reviewer-cap">0 / 45</div>
+                    <div class="kpi-label">Reviewer Calls (Active Batches)</div>
+                </div>
             </div>
 
             <div class="chart-container">
@@ -180,6 +224,44 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             
             <div class="chart-container">
                 <canvas id="tokensChart" height="80"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="subagentTypeChart" height="80"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="subagentOutcomeChart" height="80"></canvas>
+            </div>
+
+            <div class="batch-grid">
+                <div class="batch-card">
+                    <h3>Left Batch Details</h3>
+                    <div id="batch-left"></div>
+                </div>
+                <div class="batch-card">
+                    <h3>Right Batch Details</h3>
+                    <div id="batch-right"></div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-top: 0;">Recent Subagent Calls</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Orchestrator</th>
+                            <th>Subagent</th>
+                            <th>Task</th>
+                            <th>Status</th>
+                            <th>Duration</th>
+                            <th>Started At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calls-table-body">
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -263,6 +345,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             document.getElementById('kpi-tokens').innerText = (totalTokens / 1000).toFixed(1) + 'k';
             document.getElementById('kpi-friction').innerText = attemptCount > 0 ? (totalAttempts / attemptCount).toFixed(2) : '1.0';
 
+            const subagent = data.subagent || {};
+            const totals = subagent.totals || {};
+            const orchestrators = subagent.orchestrators || {};
+            const leftStats = orchestrators.left || {};
+            const rightStats = orchestrators.right || {};
+
+            document.getElementById('kpi-calls-total').innerText = totals.calls || 0;
+            document.getElementById('kpi-calls-open').innerText = totals.open || 0;
+            document.getElementById('kpi-active-batches').innerText = (leftStats.batch_id ? 1 : 0) + (rightStats.batch_id ? 1 : 0);
+            const reviewerCompleted = (leftStats.reviewer_calls_completed || 0) + (rightStats.reviewer_calls_completed || 0);
+            document.getElementById('kpi-reviewer-cap').innerText = `${reviewerCompleted} / 45`;
+
             // Charts
             new Chart(document.getElementById('frictionChart'), {
                 type: 'line',
@@ -309,6 +403,80 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     plugins: { title: { display: true, text: 'Token Consumption' } }
                 }
             });
+
+            const byType = subagent.by_type || [];
+            new Chart(document.getElementById('subagentTypeChart'), {
+                type: 'bar',
+                data: {
+                    labels: byType.map(x => x.subagent_type),
+                    datasets: [{
+                        label: 'Calls by Subagent Type',
+                        data: byType.map(x => x.total || 0),
+                        backgroundColor: '#34a853',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: 'Subagent Call Volume by Type' } }
+                }
+            });
+
+            const outcomeLabels = ['completed', 'failed', 'timeout', 'cancelled', 'open'];
+            const outcomeData = [
+                totals.completed || 0,
+                totals.failed || 0,
+                totals.timeout || 0,
+                totals.cancelled || 0,
+                totals.open || 0
+            ];
+            new Chart(document.getElementById('subagentOutcomeChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: outcomeLabels,
+                    datasets: [{
+                        data: outcomeData,
+                        backgroundColor: ['#1e8e3e', '#d93025', '#fbbc04', '#5f6368', '#1a73e8']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { title: { display: true, text: 'Subagent Call Outcomes' } }
+                }
+            });
+
+            const callsTableBody = document.getElementById('calls-table-body');
+            (subagent.recent_calls || []).forEach(c => {
+                const dur = c.duration_ms ? `${Math.round(c.duration_ms / 1000)}s` : '-';
+                callsTableBody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td><strong>${c.id}</strong></td>
+                        <td>${c.orchestrator || '-'}</td>
+                        <td>${c.subagent_type || '-'}</td>
+                        <td>${c.task_id || '-'}</td>
+                        <td>${c.status || '-'}</td>
+                        <td>${dur}</td>
+                        <td>${c.started_at || '-'}</td>
+                    </tr>
+                `);
+            });
+
+            function batchHtml(s) {
+                const active = s.batch_id ? 'yes' : 'no';
+                const cap45 = s.reviewer_cap_reached ? 'reached' : 'ok';
+                const cap15 = s.task_cap_reached ? 'reached' : 'ok';
+                return `
+                    <div class="batch-item"><span class="batch-key">Active</span><span class="batch-val">${active}</span></div>
+                    <div class="batch-item"><span class="batch-key">Batch ID</span><span class="batch-val">${s.batch_id || '-'}</span></div>
+                    <div class="batch-item"><span class="batch-key">Started At</span><span class="batch-val">${s.started_at || '-'}</span></div>
+                    <div class="batch-item"><span class="batch-key">Open Calls</span><span class="batch-val">${s.open_calls || 0}</span></div>
+                    <div class="batch-item"><span class="batch-key">Total Calls</span><span class="batch-val">${s.total_calls || 0}</span></div>
+                    <div class="batch-item"><span class="batch-key">Reviewer Calls</span><span class="batch-val">${s.reviewer_calls_completed || 0} / 45 (${cap45})</span></div>
+                    <div class="batch-item"><span class="batch-key">Tasks in Batch</span><span class="batch-val">${s.tasks_completed_in_batch || 0} / 15 (${cap15})</span></div>
+                `;
+            }
+            document.getElementById('batch-left').innerHTML = batchHtml(leftStats);
+            document.getElementById('batch-right').innerHTML = batchHtml(rightStats);
         }
 
         loadData();
@@ -342,7 +510,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def get_data(self):
         data = {
             "project_root": project.get_project_root(),
-            "tasks": []
+            "tasks": [],
+            "subagent": {
+                "available": False,
+                "orchestrators": {
+                    "left": {"batch_id": None, "reviewer_calls_completed": 0, "tasks_completed_in_batch": 0, "open_calls": 0, "total_calls": 0},
+                    "right": {"batch_id": None, "reviewer_calls_completed": 0, "tasks_completed_in_batch": 0, "open_calls": 0, "total_calls": 0}
+                },
+                "totals": {"calls": 0, "completed": 0, "failed": 0, "timeout": 0, "cancelled": 0, "open": 0},
+                "by_type": [],
+                "recent_calls": []
+            }
         }
         
         if not os.path.exists(TASKS_DB):
@@ -366,7 +544,14 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     SELECT t.id, t.title, t.status, t.created_at,
                            e.attempts_count, e.time_spent_minutes, e.tokens_estimated
                     FROM tasks t
-                    LEFT JOIN exp.task_experience e ON t.id = e.task_id
+                    LEFT JOIN exp.task_experience e
+                        ON e.id = (
+                            SELECT e2.id
+                            FROM exp.task_experience e2
+                            WHERE e2.task_id = t.id
+                            ORDER BY e2.created_at DESC, e2.id DESC
+                            LIMIT 1
+                        )
                     ORDER BY t.id ASC
                 """)
             else:
@@ -400,6 +585,136 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     "minutes": mins,
                     "tokens": tokens
                 })
+
+            if has_exp:
+                data["subagent"]["available"] = True
+                try:
+                    def get_orchestrator_stats(orchestrator: str) -> dict:
+                        cursor.execute(
+                            """
+                            SELECT batch_id, started_at
+                            FROM exp.batch_sessions
+                            WHERE orchestrator = ? AND status = 'active'
+                            ORDER BY started_at DESC
+                            LIMIT 1
+                            """,
+                            (orchestrator,),
+                        )
+                        row = cursor.fetchone()
+                        if not row:
+                            return {
+                                "batch_id": None,
+                                "started_at": None,
+                                "reviewer_calls_completed": 0,
+                                "tasks_completed_in_batch": 0,
+                                "open_calls": 0,
+                                "total_calls": 0,
+                                "reviewer_cap_reached": False,
+                                "task_cap_reached": False,
+                            }
+                        batch_id = row[0]
+                        started_at = row[1]
+                        cursor.execute("SELECT COUNT(*) FROM exp.subagent_calls WHERE batch_id = ?", (batch_id,))
+                        total_calls = int(cursor.fetchone()[0])
+                        cursor.execute("SELECT COUNT(*) FROM exp.subagent_calls WHERE batch_id = ? AND ended_at IS NULL", (batch_id,))
+                        open_calls = int(cursor.fetchone()[0])
+                        cursor.execute(
+                            "SELECT COUNT(*) FROM exp.subagent_calls WHERE batch_id = ? AND subagent_type = 'reviewer' AND status = 'completed'",
+                            (batch_id,),
+                        )
+                        reviewer_calls_completed = int(cursor.fetchone()[0])
+                        cursor.execute(
+                            "SELECT COUNT(DISTINCT task_id) FROM exp.subagent_calls WHERE batch_id = ? AND subagent_type = 'git-ops' AND status = 'completed' AND task_id IS NOT NULL",
+                            (batch_id,),
+                        )
+                        tasks_completed_in_batch = int(cursor.fetchone()[0])
+                        return {
+                            "batch_id": batch_id,
+                            "started_at": started_at,
+                            "reviewer_calls_completed": reviewer_calls_completed,
+                            "tasks_completed_in_batch": tasks_completed_in_batch,
+                            "open_calls": open_calls,
+                            "total_calls": total_calls,
+                            "reviewer_cap_reached": reviewer_calls_completed >= 45,
+                            "task_cap_reached": tasks_completed_in_batch >= 15,
+                        }
+
+                    data["subagent"]["orchestrators"]["left"] = get_orchestrator_stats("left")
+                    data["subagent"]["orchestrators"]["right"] = get_orchestrator_stats("right")
+
+                    cursor.execute(
+                        """
+                        SELECT
+                            COUNT(*) AS calls,
+                            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+                            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed,
+                            SUM(CASE WHEN status = 'timeout' THEN 1 ELSE 0 END) AS timeout,
+                            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
+                            SUM(CASE WHEN ended_at IS NULL THEN 1 ELSE 0 END) AS open
+                        FROM exp.subagent_calls
+                        """
+                    )
+                    row = cursor.fetchone()
+                    data["subagent"]["totals"] = {
+                        "calls": int(row[0] or 0),
+                        "completed": int(row[1] or 0),
+                        "failed": int(row[2] or 0),
+                        "timeout": int(row[3] or 0),
+                        "cancelled": int(row[4] or 0),
+                        "open": int(row[5] or 0),
+                    }
+
+                    cursor.execute(
+                        """
+                        SELECT
+                            subagent_type,
+                            COUNT(*) AS total,
+                            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+                            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed,
+                            SUM(CASE WHEN status = 'timeout' THEN 1 ELSE 0 END) AS timeout,
+                            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
+                            SUM(CASE WHEN ended_at IS NULL THEN 1 ELSE 0 END) AS open
+                        FROM exp.subagent_calls
+                        GROUP BY subagent_type
+                        ORDER BY total DESC, subagent_type ASC
+                        """
+                    )
+                    data["subagent"]["by_type"] = [
+                        {
+                            "subagent_type": r[0],
+                            "total": int(r[1] or 0),
+                            "completed": int(r[2] or 0),
+                            "failed": int(r[3] or 0),
+                            "timeout": int(r[4] or 0),
+                            "cancelled": int(r[5] or 0),
+                            "open": int(r[6] or 0),
+                        }
+                        for r in cursor.fetchall()
+                    ]
+
+                    cursor.execute(
+                        """
+                        SELECT id, orchestrator, subagent_type, task_id, status, duration_ms, started_at
+                        FROM exp.subagent_calls
+                        ORDER BY id DESC
+                        LIMIT 50
+                        """
+                    )
+                    data["subagent"]["recent_calls"] = [
+                        {
+                            "id": int(r[0]),
+                            "orchestrator": r[1] or "",
+                            "subagent_type": r[2] or "",
+                            "task_id": r[3] or "",
+                            "status": r[4] or "",
+                            "duration_ms": int(r[5] or 0),
+                            "started_at": r[6] or "",
+                        }
+                        for r in cursor.fetchall()
+                    ]
+                except sqlite3.Error:
+                    # Graceful fallback for older DevExperience schemas.
+                    pass
         finally:
             conn.close()
             

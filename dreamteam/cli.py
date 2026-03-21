@@ -35,6 +35,7 @@ SCRIPT_MAP = {
     "init-dev-experience": "init_dev_experience.py",
     "record-dev-experience": "record_dev_experience.py",
     "dev-experience-history": "get_dev_experience_history.py",
+    "subagent-calls": "subagent_calls.py",
     "dashboard": "dashboard.py",
     "auditor": "auditor.py",
     "researcher": "researcher.py",
@@ -132,6 +133,7 @@ def main() -> None:
         print("  dashboard            Launch Analytics Web Dashboard")
         print("  auditor              Run system audit (architecture/deps)")
         print("  researcher           Prepare context for Researcher agent")
+        print("  subagent-calls       Track subagent calls per batch")
         print("  context-graph list   Show module/function dependency graph")
         print("  bootstrap            Create .cursorrules in cwd (for empty project)")
         print()

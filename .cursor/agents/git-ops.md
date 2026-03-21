@@ -39,7 +39,7 @@ One command at a time. Wait for completion.
 2. Or: Terminal → `git add -A`; then `git commit -m "<id>: <title>"`; then `git push`
 3. If no changes — return "COMMITTED. (no changes)" — exit successfully
 4. If commit fails — return "COMMIT_FAILED. [reason]". Orchestrator will block task and continue. Do NOT ask user.
-5. If push fails — return "COMMITTED. [hash] (push failed)". Orchestrator continues to update-task. Do NOT block.
+5. If push fails — retry push exactly once. If second attempt also fails, return "COMMITTED. [hash] (push failed after retry)". Orchestrator continues to update-task. Do NOT block.
 
 ## Commit Message Format
 
@@ -57,4 +57,4 @@ Examples:
 - Run commands in project root (where .dreamteam/ or .git is)
 - Use PowerShell on Windows (semicolon between commands, not &&)
 - Do not commit .dreamteam/db/ or large binary files if .gitignore excludes them
-- On push failure — report but do not retry indefinitely
+- On push failure — retry exactly once, then report and continue

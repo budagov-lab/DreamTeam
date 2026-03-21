@@ -35,6 +35,6 @@ Use `mcp_task` with the correct `subagent_type`:
 ## Left/Right Terminal Commands (Orchestration Only)
 
 Left and Right run Terminal (`shell`) subagent ONLY for:
-`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`
+`set-goal`, `verify-tasks`, `verify-integrity`, `task-counter`, `run-next`, `update-task`, `sync-tasks`, `recover`, `memory-to-files`, `check-memory`, `vector-index`, `subagent-calls`
 
 **All other work goes to the appropriate specialized agent.**

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-step dispatcher: verify, get next task, print instructions. Run this to start each task round."""
+"""One-step dispatcher: verify, get next task, print instructions."""
 
 import os
 import sys
@@ -21,29 +21,8 @@ def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     )
 
 
-def _git_pull() -> None:
-    """Pull latest changes before starting a task. Skip if not a git repo or pull fails."""
-    r = run(["git", "pull"], check=False)
-    if r.returncode == 0:
-        if r.stdout and r.stdout.strip():
-            print("Git pull:", r.stdout.strip())
-    else:
-        err = (r.stderr or r.stdout or "").lower()
-        skip = (
-            "not a git repository" in err
-            or "not found" in err
-            or "no tracking information" in err
-            or "please specify which branch" in err
-        )
-        if not skip:
-            print("Git pull failed (continuing):", (r.stderr or r.stdout or "").strip(), file=sys.stderr)
-
-
 def main() -> None:
-    """One round: git pull -> verify -> [auto init-db + sync if needed] -> get task -> print instructions."""
-    # 0. Update from remote before each task
-    _git_pull()
-
+    """One round: verify -> [auto init-db + sync if needed] -> get task -> print instructions."""
     # 1. Verify consistency; if mismatch, init-db (if needed) + sync
     r = run([sys.executable, os.path.join(SCRIPTS_DIR, "verify_tasks.py")], check=False)
     if r.returncode != 0:
@@ -98,8 +77,13 @@ def main() -> None:
     task_id = (r.stdout or "").strip()
 
     if not task_id or task_id.upper() == "NONE":
-        # Diagnostic: show project root and task count when "complete"
+        # Distinguish true completion from "no ready tasks" states (blocked/in_progress/deps unmet).
         total = 0
+        done = 0
+        deprecated = 0
+        todo = 0
+        in_progress = 0
+        blocked = 0
         try:
             import sqlite3
             db_path = project.get_db_path()
@@ -109,15 +93,36 @@ def main() -> None:
                     cur = conn.cursor()
                     cur.execute("SELECT COUNT(*) FROM tasks")
                     total = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'done'")
+                    done = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'deprecated'")
+                    deprecated = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'todo'")
+                    todo = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'in_progress'")
+                    in_progress = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM tasks WHERE status = 'blocked'")
+                    blocked = cur.fetchone()[0]
                 finally:
                     conn.close()
         except Exception:
             pass
-        print("All tasks complete.")
+
+        truly_complete = total > 0 and (done + deprecated == total)
+        if truly_complete:
+            print("All tasks complete.")
+        else:
+            print("No ready tasks. Pending tasks remain.")
         print(f"  Project: {PROJECT_ROOT}")
         print(f"  Tasks in DB: {total}")
+        print(
+            "  Statuses: "
+            f"done={done}, deprecated={deprecated}, todo={todo}, in_progress={in_progress}, blocked={blocked}"
+        )
         if total == 0:
             print("  Hint: No tasks. Run from project folder or set DREAMTEAM_PROJECT=<path>")
+        elif not truly_complete:
+            print("  Hint: Run python -m dreamteam verify-integrity and python -m dreamteam recover")
         return
 
     # 5. Set in progress
@@ -149,7 +154,7 @@ def main() -> None:
     print("=" * 60)
     print()
     print("1. Dispatcher: Deploy specialized Orchestrator with task ID. Orchestrator uses MCP dreamteam_get_task or Terminal get-task " + task_id)
-    print("2. After Reviewer approval: Launch Git-Ops subagent (task ID + short title). Git-Ops does commit.")
+    print("2. After Reviewer approval: Launch Git-Ops subagent (task ID + short title). Git-Ops handles commit/push.")
     print("3. Then run (update-task done auto-increments counter and emits TRIGGER_*):")
     print()
     print(f"   python -m dreamteam update-task {task_id} done")
@@ -157,7 +162,7 @@ def main() -> None:
     print()
     print("4. If update-task prints TRIGGER_LEARNING (every 10): Learning -> FixPlanner")
     print("5. If update-task prints TRIGGER_RESEARCHER:")
-    print("   Researcher agent -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
+    print("   Researcher agent -> python -m dreamteam memory-to-files -> python -m dreamteam vector-index -> python -m dreamteam check-memory")
     print()
     print("6. Dispatcher auto-checkpoint every 15 tasks per batch (context switch; project can have thousands of tasks)")
     print("=" * 60)

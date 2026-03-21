@@ -41,7 +41,12 @@ def main() -> None:
 
     r = run(["git", "push"])
     if r.returncode != 0:
-        print("Push failed (continuing):", r.stderr or r.stdout, file=sys.stderr)
+        print("Push failed (retrying once):", r.stderr or r.stdout, file=sys.stderr)
+        r_retry = run(["git", "push"])
+        if r_retry.returncode != 0:
+            print("Push failed after retry (continuing):", r_retry.stderr or r_retry.stdout, file=sys.stderr)
+        else:
+            print("Pushed on retry.")
     else:
         print("Pushed.")
 

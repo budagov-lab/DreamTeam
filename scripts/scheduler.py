@@ -28,13 +28,31 @@ def parse_dependencies(deps_str: str | None) -> list[str]:
 
 def get_next_task() -> str | None:
     """Return next task ID ready for execution, or None.
-    Order: sort_order ASC, priority DESC, id ASC. First task with all deps in done_ids.
+    Priority:
+    1) Resume unfinished in_progress tasks first (oldest by queue order)
+    2) Then pick ready todo tasks (all deps done)
+    Order: sort_order ASC, priority DESC, id ASC.
     For fresh project: T001 (deps=[]) is always first."""
     if not os.path.exists(db.DB_PATH):
         print("Database not found. Run: dreamteam init-db", file=sys.stderr)
         return None
 
     with db.conn() as (conn, cursor):
+        # 1) Resume in_progress tasks before taking new todo items.
+        cursor.execute(
+            """
+            SELECT id
+            FROM tasks
+            WHERE status = 'in_progress'
+            ORDER BY sort_order ASC, priority DESC, id ASC
+            LIMIT 1
+            """
+        )
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+        # 2) Otherwise, schedule next ready todo task.
         done_ids = get_done_ids(cursor)
         cursor.execute(
             """

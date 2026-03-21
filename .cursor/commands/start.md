@@ -10,7 +10,7 @@ You are the **Dispatcher**. User invoked `/start` with a goal.
 ## Steps
 
 1. **Extract goal** from user message. **Ask user ONLY if goal is completely absent.** Never ask for anything else.
-2. **Dispatch Left** — mcp_task, subagent_type: **orchestrator-left**, prompt: "Goal: [goal]. Run up to 33 tasks per batch (planning or execution). Return BATCH_DONE or ALL_COMPLETE."
+2. **Dispatch Left** — mcp_task, subagent_type: **orchestrator-left**, prompt: "Goal: [goal]. Run one batch (planning or execution). Return BATCH_DONE or ALL_COMPLETE."
 3. **When Left returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Right** (orchestrator-right).
 4. **When Right returns** — ALL_COMPLETE → tell user. BATCH_DONE → dispatch **Left**.
 5. **Alternate** Left ↔ Right until ALL_COMPLETE.
@@ -19,14 +19,14 @@ Left/Right do: set-goal, verify-tasks, verify-integrity, run-next, update-task, 
 
 ## On Failure (Left/Right crashed)
 
-- **Left failed** → Dispatch **Right** with prompt: "Recovery: Left crashed. Run recover first, then run up to 33 tasks. Return BATCH_DONE or ALL_COMPLETE."
+- **Left failed** → Dispatch **Right** with prompt: "Recovery: Left crashed. Run recover first, then run one batch. Return BATCH_DONE or ALL_COMPLETE."
 - **Right failed** → Dispatch **Left** with same recovery prompt.
 - Never retry the crashed one. Switch to the other.
 
 ## How to Dispatch
 
-Use **Task** tool (mcp_task): subagent_type `orchestrator-left` or `orchestrator-right`, prompt: "Goal: [goal]. Run up to 33 tasks per batch. Return BATCH_DONE or ALL_COMPLETE."
-If orchestrator-left/orchestrator-right unavailable → generalPurpose: "Load .cursor/agents/orchestrator-left.md. You are Left. Goal: [goal]. Run 33 tasks per batch. Return BATCH_DONE or ALL_COMPLETE."
+Use **Task** tool (mcp_task): subagent_type `orchestrator-left` or `orchestrator-right`, prompt: "Goal: [goal]. Run one batch. Return BATCH_DONE or ALL_COMPLETE."
+If orchestrator-left/orchestrator-right unavailable → generalPurpose: "Load .cursor/agents/orchestrator-left.md. You are Left. Goal: [goal]. Run one batch. Return BATCH_DONE or ALL_COMPLETE."
 
 ## Rules
 

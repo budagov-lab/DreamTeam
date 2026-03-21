@@ -60,7 +60,7 @@ You are the **Terminal** agent for the Autonomous Development System. You are th
 
 **Left / Right** dispatch Terminal for (ALL Terminal work; Dispatcher runs NO Terminal):
 - set-goal, verify-tasks, verify-integrity, task-counter, run-next, update-task, sync-tasks
-- recover (when recovery handoff), memory-to-files (after Researcher), vector-index, check-memory
+- recover (when recovery handoff), memory-to-files (after Researcher), vector-index, check-memory, subagent-calls
 
 ## Input (from Left, Right, Planner, Developer, Reviewer, Git-Ops, Learning, FixPlanner, Researcher, Meta Planner, or Auditor)
 

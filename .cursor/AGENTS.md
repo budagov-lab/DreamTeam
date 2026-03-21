@@ -11,8 +11,8 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 **Left/Right** dispatch: Planner, Developer, Reviewer, DevExperiencer, Git-Ops, Learning, FixPlanner, Researcher, Meta Planner, Auditor, Terminal.
 
 **When to dispatch:**
-- **Left** — Dispatcher dispatches (orchestrator-left). Left runs up to 33 tasks per batch (planning or execution). Project can have thousands of tasks.
-- **Right** — Dispatcher dispatches (orchestrator-right). Right runs up to 33 tasks per batch.
+- **Left** — Dispatcher dispatches (orchestrator-left). Left runs one batch based on completion criteria (reviewer cap, task cap, context pressure). Project can have thousands of tasks.
+- **Right** — Dispatcher dispatches (orchestrator-right). Right runs one batch based on completion criteria.
 - **Planner** — Left/Right dispatch (planner). Planner breaks into epics, dispatches Sub-Planner.
 - **Planner-Sub** — Planner dispatches (planner-sub), not Orchestrator
 - **DevExperiencer** — Left/Right dispatch after Reviewer (dev-experiencer)
@@ -44,8 +44,8 @@ This project uses the Autonomous Development System. Roles can be executed **as 
 | Role | Prompt File | When to Use |
 |------|-------------|-------------|
 | Dispatcher | `.cursor/agents/dispatcher.md` | ONLY dispatches Left/Right. Left/Right do all subagent orchestration. |
-| Left | `.cursor/agents/orchestrator-left.md` | Sub-orchestrator, up to 33 tasks per batch (context switch; project can have thousands) |
-| Right | `.cursor/agents/orchestrator-right.md` | Sub-orchestrator, up to 33 tasks per batch |
+| Left | `.cursor/agents/orchestrator-left.md` | Sub-orchestrator, one batch by completion criteria (context switch; project can have thousands) |
+| Right | `.cursor/agents/orchestrator-right.md` | Sub-orchestrator, one batch by completion criteria |
 | Planner | `.cursor/agents/planner.md` | New goal, epic, or task decomposition |
 | Planner-Sub | `.cursor/agents/planner-sub.md` | Expand one epic into 15–25 subtasks |
 | Developer | `.cursor/agents/developer.md` | Executing a task from scheduler |
