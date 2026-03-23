@@ -181,24 +181,7 @@ Launch a minimalistic web dashboard to track your Cruiser's performance:
 ---
 
 ## License
-
-**PolyForm Noncommercial 1.0.0** — for personal, educational, and non-profit use only.  
-See [LICENSE](LICENSE) for full details.
-
-### Author’s Engineering Pattern Notice
-
-The dual-orchestrator dispatch model (also referred to as the “ping-pong execution loop” with context resets) is an engineering approach developed as part of the DreamTeam system.
-While multi-agent orchestration is a general concept, the specific implementation, documentation, code structures, and detailed execution methodology described in this project are proprietary and constitute the intellectual property of the authors.
-This approach enables controlled long-running LLM pipelines by:
-
-- preventing unbounded context accumulation,
-- enforcing deterministic execution segments, and
-- isolating intermediate state across cycles.
-
-The combination of alternating orchestrators, dispatcher-mediated control flow, bounded task cycles, and systematic context resets, as implemented and documented in this project, is protected.
-Commercial use, reproduction, or adaptation of this implementation — including substantially similar systems derived from the project materials — is prohibited without a separate commercial license.
-This restriction does not apply to personal, educational, or non-profit use, which is permitted under the PolyForm Noncommercial 1.0.0 license.
-This notice applies to the implementation, documentation, and materials associated with this project, not to abstract ideas or concepts of orchestration or task dispatching.
+MIT license
 
 ---
 <p align="center">Crafted for Cursor adepts with love from <b>BuLab</b></p>
